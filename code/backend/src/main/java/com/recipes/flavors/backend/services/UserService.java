@@ -41,6 +41,11 @@ public class UserService {
         return this.userRepository.save(newObj);
     }
 
+    public void delete(Long id) {
+        findById(id);
+        this.userRepository.deleteById(id);
+    }
+
     public User fromDTO(@Valid UserCreateDTO obj) {
         User user = new User();
         user.setName(obj.getName());
