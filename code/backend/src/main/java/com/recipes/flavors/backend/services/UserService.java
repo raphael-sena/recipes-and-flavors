@@ -2,6 +2,7 @@ package com.recipes.flavors.backend.services;
 
 import com.recipes.flavors.backend.entities.User;
 import com.recipes.flavors.backend.entities.dto.UserCreateDTO;
+import com.recipes.flavors.backend.entities.dto.UserUpdateDTO;
 import com.recipes.flavors.backend.repositories.UserRepository;
 import com.recipes.flavors.backend.services.exceptions.ObjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,10 +34,24 @@ public class UserService {
         return obj;
     }
 
+    @Transactional
+    public User update(User obj) {
+        User newObj = findById(obj.getId());
+        newObj.setPassword(obj.getPassword());
+        return this.userRepository.save(newObj);
+    }
+
     public User fromDTO(@Valid UserCreateDTO obj) {
         User user = new User();
         user.setName(obj.getName());
         user.setEmail(obj.getEmail());
+        user.setPassword(obj.getPassword());
+        return user;
+    }
+
+    public User fromDTO(@Valid UserUpdateDTO obj) {
+        User user = new User();
+        user.setId(obj.getId());
         user.setPassword(obj.getPassword());
         return user;
     }
