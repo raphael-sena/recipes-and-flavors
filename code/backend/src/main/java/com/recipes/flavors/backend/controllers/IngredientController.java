@@ -48,4 +48,10 @@ public class IngredientController {
         this.ingredientService.update(ingredient);
         return ResponseEntity.noContent().build();
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        this.ingredientService.delete(id);
+        return ResponseEntity.noContent().build();
+    }
 }

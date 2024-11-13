@@ -1,7 +1,6 @@
 package com.recipes.flavors.backend.services;
 
 import com.recipes.flavors.backend.entities.Ingredient;
-import com.recipes.flavors.backend.entities.User;
 import com.recipes.flavors.backend.entities.dto.IngredientCreateDTO;
 import com.recipes.flavors.backend.entities.dto.IngredientUpdateDTO;
 import com.recipes.flavors.backend.repositories.IngredientRepository;
@@ -42,6 +41,11 @@ public class IngredientService {
         newObj.setQuantity(obj.getQuantity());
         newObj.setUnity(obj.getUnity());
         return this.ingredientRepository.save(newObj);
+    }
+
+    public void delete(Long id) {
+        findById(id);
+        this.ingredientRepository.deleteById(id);
     }
 
     public Ingredient fromDTO(@Valid IngredientCreateDTO obj) {
