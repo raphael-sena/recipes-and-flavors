@@ -1,4 +1,4 @@
-package com.recipes.flavors.backend.entities.dto;
+package com.recipes.flavors.backend.entities.dto.review;
 
 import com.recipes.flavors.backend.entities.User;
 import lombok.AllArgsConstructor;

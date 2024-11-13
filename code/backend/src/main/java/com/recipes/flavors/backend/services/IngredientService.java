@@ -1,8 +1,8 @@
 package com.recipes.flavors.backend.services;
 
 import com.recipes.flavors.backend.entities.Ingredient;
-import com.recipes.flavors.backend.entities.dto.IngredientCreateDTO;
-import com.recipes.flavors.backend.entities.dto.IngredientUpdateDTO;
+import com.recipes.flavors.backend.entities.dto.ingredient.IngredientCreateDTO;
+import com.recipes.flavors.backend.entities.dto.ingredient.IngredientUpdateDTO;
 import com.recipes.flavors.backend.repositories.IngredientRepository;
 import com.recipes.flavors.backend.services.exceptions.ObjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;

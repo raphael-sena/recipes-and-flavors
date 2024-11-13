@@ -1,8 +1,8 @@
 package com.recipes.flavors.backend.controllers;
 
 import com.recipes.flavors.backend.entities.Review;
-import com.recipes.flavors.backend.entities.dto.ReviewCreateDTO;
-import com.recipes.flavors.backend.entities.dto.ReviewUpdateDTO;
+import com.recipes.flavors.backend.entities.dto.review.ReviewCreateDTO;
+import com.recipes.flavors.backend.entities.dto.review.ReviewUpdateDTO;
 import com.recipes.flavors.backend.services.ReviewService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

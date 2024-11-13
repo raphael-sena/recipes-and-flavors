@@ -1,8 +1,8 @@
 package com.recipes.flavors.backend.controllers;
 
 import com.recipes.flavors.backend.entities.User;
-import com.recipes.flavors.backend.entities.dto.UserCreateDTO;
-import com.recipes.flavors.backend.entities.dto.UserUpdateDTO;
+import com.recipes.flavors.backend.entities.dto.user.UserCreateDTO;
+import com.recipes.flavors.backend.entities.dto.user.UserUpdateDTO;
 import com.recipes.flavors.backend.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

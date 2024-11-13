@@ -1,8 +1,8 @@
 package com.recipes.flavors.backend.controllers;
 
 import com.recipes.flavors.backend.entities.Method;
-import com.recipes.flavors.backend.entities.dto.MethodCreateDTO;
-import com.recipes.flavors.backend.entities.dto.MethodUpdateDTO;
+import com.recipes.flavors.backend.entities.dto.method.MethodCreateDTO;
+import com.recipes.flavors.backend.entities.dto.method.MethodUpdateDTO;
 import com.recipes.flavors.backend.services.MethodService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

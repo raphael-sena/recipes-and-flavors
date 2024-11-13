@@ -2,8 +2,8 @@ package com.recipes.flavors.backend.services;
 
 import com.recipes.flavors.backend.entities.Review;
 import com.recipes.flavors.backend.entities.User;
-import com.recipes.flavors.backend.entities.dto.ReviewCreateDTO;
-import com.recipes.flavors.backend.entities.dto.ReviewUpdateDTO;
+import com.recipes.flavors.backend.entities.dto.review.ReviewCreateDTO;
+import com.recipes.flavors.backend.entities.dto.review.ReviewUpdateDTO;
 import com.recipes.flavors.backend.repositories.ReviewRepository;
 import com.recipes.flavors.backend.repositories.UserRepository;
 import com.recipes.flavors.backend.services.exceptions.ObjectNotFoundException;
