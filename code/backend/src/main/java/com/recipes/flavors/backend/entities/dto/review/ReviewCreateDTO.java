@@ -11,7 +11,7 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 @Data
 public class ReviewCreateDTO {
-    private Long id;
+
     private String comment;
 
     @NotNull(message = "User cannot be null")
