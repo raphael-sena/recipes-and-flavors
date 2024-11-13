@@ -7,6 +7,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "tb_ingredient")
@@ -30,6 +32,6 @@ public class Ingredient {
     @Enumerated(EnumType.STRING)
     private UnityEnum unity;
 
-    // TODO
-    // private Recipe recipe;
+    @ManyToMany(mappedBy = "ingredients")
+    private Set<Recipe> recipes = new HashSet<>();
 }

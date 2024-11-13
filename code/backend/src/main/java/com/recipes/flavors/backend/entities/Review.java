@@ -37,6 +37,7 @@ public class Review {
     @Column(name = "comment")
     private String comment;
 
-    // TODO
-    // private Recipe recipe;
+    @ManyToOne
+    @JoinColumn(name = "recipe_id")
+    private Recipe recipe;
 }
