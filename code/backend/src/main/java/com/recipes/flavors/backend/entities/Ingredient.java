@@ -29,4 +29,7 @@ public class Ingredient {
 
     @Enumerated(EnumType.STRING)
     private UnityEnum unity;
+
+    // TODO
+    // private Recipe recipe;
 }
