@@ -31,14 +31,19 @@ public class IngredientController {
 
     @PostMapping
     public ResponseEntity<Void> create(@Valid @RequestBody IngredientCreateDTO obj) {
+
         Ingredient ingredient = this.ingredientService.fromDTO(obj);
         Ingredient newIngredient = this.ingredientService.create(ingredient);
+
         URI uri = ServletUriComponentsBuilder
                 .fromCurrentRequest()
                 .path("/{id}")
                 .buildAndExpand(newIngredient.getId())
                 .toUri();
-        return ResponseEntity.created(uri).build();
+
+        return ResponseEntity
+                .created(uri)
+                .build();
     }
 
     @PutMapping("/{id}")
