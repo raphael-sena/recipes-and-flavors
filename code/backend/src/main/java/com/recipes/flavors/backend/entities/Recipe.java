@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
+import java.time.Duration;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -46,16 +47,32 @@ public class Recipe {
     @Lob
     private byte[] image;
 
-    private Integer preparationTime;
-    private Integer cookTime;
-    private Integer totalTime;
+    @Column(name = "preparationTime", nullable = false)
+    private Duration preparationTime;
+
+    @Column(name = "cookTime", nullable = false)
+    private Duration cookTime;
+
+    @Column(name = "totalTime")
+    private Duration totalTime;
+
+    @Column(name = "servings", nullable = false)
     private Integer servings;
 
+    @Enumerated(EnumType.STRING)
     private DietType dietType;
+
+    @Enumerated(EnumType.STRING)
     private CuisineType cuisineType;
+
+    @Enumerated(EnumType.STRING)
     private Difficulty difficulty;
+
+    @Enumerated(EnumType.STRING)
     private Category category;
 
     @OneToMany(mappedBy = "recipe", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Review> reviews = new HashSet<>();
+
+    private boolean deleted = Boolean.FALSE;
 }
