@@ -1,9 +1,9 @@
 package com.recipes.flavors.backend.controllers;
 
-import com.recipes.flavors.backend.entities.Ingredient;
-import com.recipes.flavors.backend.entities.dto.ingredient.IngredientCreateDTO;
-import com.recipes.flavors.backend.entities.dto.ingredient.IngredientUpdateDTO;
-import com.recipes.flavors.backend.services.IngredientService;
+import com.recipes.flavors.backend.entities.Recipe;
+import com.recipes.flavors.backend.entities.dto.recipe.RecipeCreateDTO;
+import com.recipes.flavors.backend.entities.dto.recipe.RecipeUpdateDTO;
+import com.recipes.flavors.backend.services.RecipeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -21,31 +21,32 @@ import javax.validation.Valid;
 import java.net.URI;
 
 @RestController
-@RequestMapping("/ingredient")
+@RequestMapping("/recipe")
 @Validated
-public class IngredientController {
+public class RecipeController {
 
     @Autowired
-    private IngredientService ingredientService;
+    private RecipeService recipeService;
 
     @GetMapping("/{id}")
-    public ResponseEntity<Ingredient> findById(@PathVariable Long id) {
-        Ingredient obj = this.ingredientService.findById(id);
+    public ResponseEntity<Recipe> findById(@PathVariable Long id) {
+        Recipe obj = this.recipeService.findById(id);
+
         return ResponseEntity
                 .ok()
                 .body(obj);
     }
 
     @PostMapping
-    public ResponseEntity<Void> create(@Valid @RequestBody IngredientCreateDTO obj) {
+    public ResponseEntity<Void> create(@Valid @RequestBody RecipeCreateDTO obj) {
 
-        Ingredient ingredient = this.ingredientService.fromDTO(obj);
-        Ingredient newIngredient = this.ingredientService.create(ingredient);
+        Recipe recipe = this.recipeService.fromDTO(obj);
+        Recipe newRecipe = this.recipeService.create(recipe);
 
         URI uri = ServletUriComponentsBuilder
                 .fromCurrentRequest()
                 .path("/{id}")
-                .buildAndExpand(newIngredient.getId())
+                .buildAndExpand(newRecipe.getId())
                 .toUri();
 
         return ResponseEntity
@@ -54,16 +55,23 @@ public class IngredientController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Void> update(@Valid @RequestBody IngredientUpdateDTO obj, @PathVariable Long id) {
+    public ResponseEntity<Void> update(@Valid @RequestBody RecipeUpdateDTO obj, @PathVariable Long id) {
         obj.setId(id);
-        Ingredient ingredient = this.ingredientService.fromDTO(obj);
-        this.ingredientService.update(ingredient);
-        return ResponseEntity.noContent().build();
+
+        Recipe recipe = this.recipeService.fromDTO(obj);
+        this.recipeService.update(recipe);
+
+        return ResponseEntity
+                .noContent()
+                .build();
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
-        this.ingredientService.delete(id);
-        return ResponseEntity.noContent().build();
+        this.recipeService.delete(id);
+
+        return ResponseEntity
+                .noContent()
+                .build();
     }
 }

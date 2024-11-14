@@ -29,7 +29,7 @@ public class IngredientService {
         obj.setId(null);
         obj.setName(obj.getName());
         obj.setQuantity(obj.getQuantity());
-        obj.setUnity(obj.getUnity());
+        obj.setUnit(obj.getUnit());
         obj = this.ingredientRepository.save(obj);
         return obj;
     }
@@ -39,7 +39,7 @@ public class IngredientService {
         Ingredient newObj = findById(obj.getId());
         newObj.setName(obj.getName());
         newObj.setQuantity(obj.getQuantity());
-        newObj.setUnity(obj.getUnity());
+        newObj.setUnit(obj.getUnit());
         return this.ingredientRepository.save(newObj);
     }
 
@@ -52,7 +52,7 @@ public class IngredientService {
         Ingredient ingredient = new Ingredient();
         ingredient.setName(obj.getName());
         ingredient.setQuantity(obj.getQuantity());
-        ingredient.setUnity(obj.getUnity());
+        ingredient.setUnit(obj.getUnity());
         return ingredient;
     }
 
@@ -61,7 +61,7 @@ public class IngredientService {
         ingredient.setId(obj.getId());
         ingredient.setName(obj.getName());
         ingredient.setQuantity(obj.getQuantity());
-        ingredient.setUnity(obj.getUnity());
+        ingredient.setUnit(obj.getUnity());
         return ingredient;
     }
 }

@@ -7,20 +7,27 @@ import com.recipes.flavors.backend.services.ReviewService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 
 @RestController
-@RequestMapping("/review")
+@RequestMapping("/recipes")
 @Validated
 public class ReviewController {
 
     @Autowired
     private ReviewService reviewService;
 
-    @GetMapping("/{id}")
+    @GetMapping("/review/{id}")
     public ResponseEntity<Review> findById(@PathVariable Long id) {
         Review obj = this.reviewService.findById(id);
 
@@ -29,15 +36,19 @@ public class ReviewController {
                 .body(obj);
     }
 
-    @PostMapping
-    public ResponseEntity<String> create(@Validated @RequestBody ReviewCreateDTO obj) {
+    @PostMapping("/{recipeId}/review")
+    public ResponseEntity<String> create(@Validated @RequestBody ReviewCreateDTO obj, @PathVariable Long recipeId) {
 
         if (obj.getUser() == null) {
             return ResponseEntity.badRequest().body("User cannot be null.");
         }
 
-        Review review = this.reviewService.fromDTO(obj);
-        Review newReview = this.reviewService.create(review);
+        if (recipeId == null) {
+            return ResponseEntity.badRequest().body("Recipe id cannot be null.");
+        }
+
+        Review review = this.reviewService.fromDTO(obj, recipeId);
+        Review newReview = this.reviewService.create(review, recipeId);
 
         URI uri = ServletUriComponentsBuilder
                 .fromCurrentRequest()
@@ -50,7 +61,7 @@ public class ReviewController {
                 .build();
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/{recipeId}/review/{id}")
     public ResponseEntity<Void> update(@Validated @RequestBody ReviewUpdateDTO obj, @PathVariable Long id) {
 
         obj.setId(id);
@@ -63,7 +74,7 @@ public class ReviewController {
                 .build();
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{recipeId}/review/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
 
         this.reviewService.delete(id);

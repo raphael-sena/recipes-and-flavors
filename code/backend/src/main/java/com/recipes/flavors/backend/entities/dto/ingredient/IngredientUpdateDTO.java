@@ -1,6 +1,6 @@
 package com.recipes.flavors.backend.entities.dto.ingredient;
 
-import com.recipes.flavors.backend.entities.enums.UnityEnum;
+import com.recipes.flavors.backend.entities.enums.UnitEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -12,5 +12,5 @@ public class IngredientUpdateDTO {
     private Long id;
     private String name;
     private Double quantity;
-    private UnityEnum unity;
+    private UnitEnum unity;
 }
