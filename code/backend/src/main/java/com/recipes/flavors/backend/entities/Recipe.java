@@ -1,5 +1,6 @@
 package com.recipes.flavors.backend.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.recipes.flavors.backend.entities.enums.Category;
 import com.recipes.flavors.backend.entities.enums.CuisineType;
 import com.recipes.flavors.backend.entities.enums.DietType;
@@ -9,13 +10,12 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
 import jakarta.persistence.Lob;
-import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
@@ -52,16 +52,18 @@ public class Recipe {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToMany(mappedBy = "recipe", cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "recipe", cascade = CascadeType.ALL)
     @Cascade({
             org.hibernate.annotations.CascadeType.DELETE_ORPHAN
     })
+    @JsonIgnoreProperties({"recipe"})
     private List<Ingredient> ingredients;
 
-    @OneToMany(mappedBy = "recipe", cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "recipe", cascade = CascadeType.ALL)
     @Cascade({
             org.hibernate.annotations.CascadeType.DELETE_ORPHAN
     })
+    @JsonIgnoreProperties({"recipe"})
     private List<Method> methods;
 
     @Lob

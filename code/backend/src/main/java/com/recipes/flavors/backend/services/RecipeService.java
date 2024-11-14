@@ -34,9 +34,6 @@ public class RecipeService {
     private IngredientRepository ingredientRepository;
 
     @Autowired
-    private IngredientService ingredientService;
-
-    @Autowired
     private UserRepository userRepository;
 
     public Recipe findById(Long id) {
@@ -58,30 +55,47 @@ public class RecipeService {
         return this.recipeRepository.save(newObj);
     }
 
+    public void delete(Long id) {
+        findById(id);
+        this.recipeRepository.deleteById(id);
+    }
+
     @Transactional
     public Recipe fromDTO(@Valid RecipeCreateDTO obj) {
 
         Recipe recipe = new Recipe();
+        Recipe finalRecipe = recipe;
 
         Optional<User> user = userRepository.findById(obj.getUserId());
-
         recipe.setUser(user.get());
-        recipe.setName(obj.getName());
 
+        recipe.setName(obj.getName());
+        recipe.setImage(obj.getImage());
+        recipe.setPreparationTime(obj.getPreparationTime().toMinutes());
+        recipe.setCookTime(obj.getCookTime().toMinutes());
+        recipe.setServings(obj.getServings());
+        recipe.setDietType(obj.getDietType());
+        recipe.setCuisineType(obj.getCuisineType());
+        recipe.setDifficulty(obj.getDifficulty());
+        recipe.setCategory(obj.getCategory());
+
+        // Salva a nova receita antes de salvar os ingredientes
+        recipe = recipeRepository.save(recipe);
+
+        // Salva os ingredientes
         List<Ingredient> ingredients = obj.getIngredients().stream()
                 .map(ingredient -> {
                     Ingredient newIngredient = new Ingredient();
                     newIngredient.setName(ingredient.getName());
                     newIngredient.setQuantity(ingredient.getQuantity());
-                    newIngredient.setUnity(ingredient.getUnity());
+                    newIngredient.setUnit(ingredient.getUnit());
+                    newIngredient.setRecipe(finalRecipe);
                     return ingredientRepository.save(newIngredient);  // Salva e retorna o ingrediente
                 })
                 .collect(Collectors.toList());
         recipe.setIngredients(ingredients);
 
-        recipe = recipeRepository.save(recipe);
-
-        Recipe finalRecipe = recipe;
+        // Salva os métodos
         List<Method> methods = obj.getMethods().stream()
                 .map(method -> {
                     Method newMethod = new Method();
@@ -91,15 +105,6 @@ public class RecipeService {
                 })
                 .collect(Collectors.toList());
         recipe.setMethods(methods);
-
-        recipe.setImage(obj.getImage());
-        recipe.setPreparationTime(obj.getPreparationTime().toMinutes());
-        recipe.setCookTime(obj.getCookTime().toMinutes());
-        recipe.setServings(obj.getServings());
-        recipe.setDietType(obj.getDietType());
-        recipe.setCuisineType(obj.getCuisineType());
-        recipe.setDifficulty(obj.getDifficulty());
-        recipe.setCategory(obj.getCategory());
 
         return recipe;
     }
@@ -130,7 +135,7 @@ public class RecipeService {
                     : new Ingredient();
 
             ingredient.setName(ingredientDTO.getName());
-            ingredient.setUnity(ingredientDTO.getUnity());
+            ingredient.setUnit(ingredientDTO.getUnit());
             ingredient.setQuantity(ingredientDTO.getQuantity());
             ingredient.setRecipe(recipe);  // Associa o método à receita existente
             ingredientRepository.save(ingredient); // Salva o método atualizado ou novo
