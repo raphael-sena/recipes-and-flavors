@@ -2,6 +2,7 @@ package com.recipes.flavors.backend.controllers;
 
 import com.recipes.flavors.backend.entities.Recipe;
 import com.recipes.flavors.backend.entities.dto.recipe.RecipeCreateDTO;
+import com.recipes.flavors.backend.entities.dto.recipe.RecipeUpdateDTO;
 import com.recipes.flavors.backend.services.RecipeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -43,6 +44,18 @@ public class RecipeController {
 
         return ResponseEntity
                 .created(uri)
+                .build();
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Void> update(@Valid @RequestBody RecipeUpdateDTO obj, @PathVariable Long id) {
+        obj.setId(id);
+
+        Recipe recipe = this.recipeService.fromDTO(obj);
+        this.recipeService.update(recipe);
+
+        return ResponseEntity
+                .noContent()
                 .build();
     }
 }

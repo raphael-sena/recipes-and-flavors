@@ -17,6 +17,7 @@ import java.util.List;
 @NoArgsConstructor
 @Data
 public class RecipeUpdateDTO {
+    private Long id;
     private String name;
     private List<Ingredient> ingredients;
     private List<Method> methods;
