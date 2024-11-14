@@ -22,6 +22,7 @@ import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
@@ -51,15 +52,16 @@ public class Recipe {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @ManyToMany
-    @JoinTable(
-            name = "tb_ingredient_recipe",  // Tabela de junção
-            joinColumns = @JoinColumn(name = "recipe_id"), // Coluna que representa a entidade 'Recipe' na tabela de junção
-            inverseJoinColumns = @JoinColumn(name = "ingredient_id") // Coluna que representa a entidade 'Ingredient' na tabela de junção
-    )
+    @OneToMany(mappedBy = "recipe", cascade = CascadeType.ALL)
+    @Cascade({
+            org.hibernate.annotations.CascadeType.DELETE_ORPHAN
+    })
     private List<Ingredient> ingredients;
 
-    @OneToMany(mappedBy = "recipe", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "recipe", cascade = CascadeType.ALL)
+    @Cascade({
+            org.hibernate.annotations.CascadeType.DELETE_ORPHAN
+    })
     private List<Method> methods;
 
     @Lob
