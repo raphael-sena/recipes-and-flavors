@@ -22,7 +22,7 @@ public class Method {
     @Size(min = 1, max = 255)
     private String description;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "recipe_id")
     private Recipe recipe;
 }

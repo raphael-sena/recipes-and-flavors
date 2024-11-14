@@ -4,14 +4,28 @@ import com.recipes.flavors.backend.entities.enums.Category;
 import com.recipes.flavors.backend.entities.enums.CuisineType;
 import com.recipes.flavors.backend.entities.enums.DietType;
 import com.recipes.flavors.backend.entities.enums.Difficulty;
-import jakarta.persistence.*;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.Lob;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
-import java.time.Duration;
+import javax.validation.constraints.NotNull;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -29,6 +43,10 @@ public class Recipe {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "name", nullable = false)
+    @NotNull(message = "Name cannot be null.")
+    private String name;
+
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
@@ -45,18 +63,19 @@ public class Recipe {
     private List<Method> methods;
 
     @Lob
+    @Column(unique = true)
     private byte[] image;
 
-    @Column(name = "preparationTime", nullable = false)
-    private Duration preparationTime;
+    @Column(name = "preparationTime")
+    private Long preparationTime;
 
-    @Column(name = "cookTime", nullable = false)
-    private Duration cookTime;
+    @Column(name = "cookTime")
+    private Long cookTime;
 
     @Column(name = "totalTime")
-    private Duration totalTime;
+    private Long totalTime;
 
-    @Column(name = "servings", nullable = false)
+    @Column(name = "servings")
     private Integer servings;
 
     @Enumerated(EnumType.STRING)

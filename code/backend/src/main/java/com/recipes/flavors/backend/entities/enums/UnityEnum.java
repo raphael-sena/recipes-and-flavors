@@ -9,5 +9,6 @@ public enum UnityEnum {
     LITRE,
     TABLESPOON,
     CUP,
-    TEASPOON
+    TEASPOON,
+    UNITS
 }
