@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.validation.Valid;
-import java.time.Duration;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -43,28 +42,6 @@ public class RecipeService {
         return recipe.orElseThrow(() -> new ObjectNotFoundException(
                 "Receita não encontrada! Id: " + id + ", Tipo: " + Recipe.class.getName()));
     }
-
-//    @Transactional
-//    public Recipe create(Recipe obj) {
-//
-//        obj.setId(null);
-//        obj.setName(obj.getName());
-//        obj.setUser(obj.getUser());
-//        obj.setIngredients(obj.getIngredients());
-//        obj.setMethods(obj.getMethods());
-//        obj.setImage(obj.getImage());
-//        obj.setPreparationTime(obj.getPreparationTime());
-//        obj.setCookTime(obj.getCookTime());
-//        obj.setServings(obj.getServings());
-//        obj.setDietType(obj.getDietType());
-//        obj.setCuisineType(obj.getCuisineType());
-//        obj.setDifficulty(obj.getDifficulty());
-//        obj.setCategory(obj.getCategory());
-//        obj.setTotalTime(totalTime(obj.getCookTime(), obj.getPreparationTime()));
-//        obj.setDeleted(obj.isDeleted());
-//
-//        return recipeRepository.save(obj);
-//    }
 
     @Transactional
     public Recipe create(Recipe obj) {
