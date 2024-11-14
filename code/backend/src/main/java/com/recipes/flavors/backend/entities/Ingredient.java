@@ -32,6 +32,7 @@ public class Ingredient {
     @Enumerated(EnumType.STRING)
     private UnityEnum unity;
 
-    @ManyToMany(mappedBy = "ingredients")
-    private Set<Recipe> recipes = new HashSet<>();
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "recipe_id")
+    private Recipe recipe;
 }
