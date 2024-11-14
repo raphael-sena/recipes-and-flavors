@@ -50,6 +50,7 @@ public class Recipe {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
+    @JsonIgnoreProperties({"email", "recipes"})
     private User user;
 
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "recipe", cascade = CascadeType.ALL)

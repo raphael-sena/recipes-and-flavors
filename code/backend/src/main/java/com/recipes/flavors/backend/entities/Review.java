@@ -1,5 +1,6 @@
 package com.recipes.flavors.backend.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -28,6 +29,7 @@ public class Review {
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false, updatable = false)
+    @JsonIgnoreProperties({"recipes"})
     private User user;
 
     @Column(name = "rating")
@@ -39,5 +41,6 @@ public class Review {
 
     @ManyToOne
     @JoinColumn(name = "recipe_id")
+    @JsonIgnoreProperties({"ingredients", "methods", "image", "preparationTime", "cookTime", "totalTime", "servings", "dietType", "cuisineType", "difficulty", "category", "reviews", "deleted"})
     private Recipe recipe;
 }

@@ -1,9 +1,11 @@
 package com.recipes.flavors.backend.services;
 
+import com.recipes.flavors.backend.entities.Recipe;
 import com.recipes.flavors.backend.entities.Review;
 import com.recipes.flavors.backend.entities.User;
 import com.recipes.flavors.backend.entities.dto.review.ReviewCreateDTO;
 import com.recipes.flavors.backend.entities.dto.review.ReviewUpdateDTO;
+import com.recipes.flavors.backend.repositories.RecipeRepository;
 import com.recipes.flavors.backend.repositories.ReviewRepository;
 import com.recipes.flavors.backend.repositories.UserRepository;
 import com.recipes.flavors.backend.services.exceptions.ObjectNotFoundException;
@@ -22,6 +24,8 @@ public class ReviewService {
 
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private RecipeRepository recipeRepository;
 
 
     public Review findById(Long id) {
@@ -31,7 +35,12 @@ public class ReviewService {
     }
 
     @Transactional
-    public Review create(Review obj) {
+    public Review create(Review obj, Long recipeId) {
+
+        Optional<Recipe> recipe = recipeRepository.findById(recipeId);
+
+        obj.setRecipe(recipe.get());
+
         obj.setId(null);
         obj.setUser(obj.getUser());
         obj.setComment(obj.getComment());
@@ -59,7 +68,7 @@ public class ReviewService {
         this.reviewRepository.deleteById(id);
     }
 
-    public Review fromDTO(@Valid ReviewCreateDTO obj) {
+    public Review fromDTO(@Valid ReviewCreateDTO obj, Long recipeId) {
 
         if (obj.getUser() == null || obj.getUser().getId() == null) {
             throw new ObjectNotFoundException("Usuário deve possuir um ID válido.");
@@ -69,10 +78,15 @@ public class ReviewService {
                 .findById(obj.getUser().getId())
                 .orElseThrow(() -> new ObjectNotFoundException("Usuário não encontrado!"));
 
+        Recipe recipe = recipeRepository
+                .findById(recipeId)
+                .orElseThrow(() -> new ObjectNotFoundException("Receita não encontrada!"));
+
         Review review = new Review();
         review.setComment(obj.getComment());
         review.setUser(user);
         review.setRating(obj.getRating());
+        review.setRecipe(recipe);
 
         return review;
     }
