@@ -1,9 +1,10 @@
 package com.recipes.flavors.backend.services;
 
+import com.recipes.flavors.backend.entities.Role;
 import com.recipes.flavors.backend.entities.User;
 import com.recipes.flavors.backend.entities.dto.user.UserCreateDTO;
 import com.recipes.flavors.backend.entities.dto.user.UserUpdateDTO;
-import com.recipes.flavors.backend.entities.enums.ProfileEnum;
+import com.recipes.flavors.backend.repositories.RoleRepository;
 import com.recipes.flavors.backend.repositories.UserRepository;
 import com.recipes.flavors.backend.services.exceptions.ObjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,9 +13,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.validation.Valid;
+import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import java.util.Set;
 
 @Service
 public class UserService {
@@ -25,23 +26,34 @@ public class UserService {
     @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
+    @Autowired
+    private RoleRepository roleRepository;
+
+    public List<User> findAll() {
+        return userRepository.findAll();
+    }
+
     public User findById(Long id) {
         Optional<User> user = this.userRepository.findById(id);
         return user.orElseThrow(() -> new ObjectNotFoundException(
                 "Usuário não encontrado! Id: " + id + ", Tipo: " + User.class.getName()));
     }
 
-    @Transactional
+    public Optional<User> findByEmail(String email) {
+        return userRepository.findByEmail(email);
+    }
+
     public User create(User obj) {
-        obj.setId(null);
-        obj.setName(obj.getName());
-        obj.setEmail(obj.getEmail());
-        obj.setPassword(this.bCryptPasswordEncoder.encode(obj.getPassword()));
-        obj.setProfiles(Stream.
-                of(ProfileEnum.USER.getCode())
-                .collect(Collectors.toSet()));
-        obj = this.userRepository.save(obj);
-        return obj;
+        var roleBasic = roleRepository.findByName(Role.Values.BASIC.name());
+        User user = new User();
+        user.setId(obj.getId());
+        user.setPassword(bCryptPasswordEncoder.encode(obj.getPassword()));
+        user.setRoles(Set.of(roleBasic));
+        return user;
+    }
+
+    public void createAdmin(User usuario) {
+        userRepository.save(usuario);
     }
 
     @Transactional
@@ -58,9 +70,9 @@ public class UserService {
 
     public User fromDTO(@Valid UserCreateDTO obj) {
         User user = new User();
-        user.setName(obj.getName());
         user.setEmail(obj.getEmail());
-        user.setPassword(obj.getPassword());
+        user.setName(obj.getName());
+        user.setPassword(bCryptPasswordEncoder.encode(obj.getPassword()));
         return user;
     }
 
@@ -70,4 +82,10 @@ public class UserService {
         user.setPassword(obj.getPassword());
         return user;
     }
+
+    public void updatePassword(User user, String newPassword) {
+        user.setPassword(bCryptPasswordEncoder.encode(newPassword));
+        userRepository.save(user);
+    }
+
 }
