@@ -1,5 +1,6 @@
 import Image from "next/image";
 import SignInButtonComponent from "./components/SignInButtonComponent";
+import Footer from "./components/FooterComponent";
 
 const handleSignInClick = () => {
   console.log("Botão de Sign In clicado!");
@@ -15,7 +16,7 @@ export default function Page() {
           <h1 className="font-extrabold">Recipes&Flavors</h1>
         </div>
 
-        <Image
+        <img
           src="/img/Recipes&Flavors.png"
           alt="Logo Recipes & Flavors"
           width={400}
@@ -34,6 +35,8 @@ export default function Page() {
               <a href="/signup">Create an account</a>
             </p>
         </div>
+ 
+        <Footer />
       </div>
     </div>
   );
