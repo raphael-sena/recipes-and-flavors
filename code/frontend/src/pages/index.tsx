@@ -2,10 +2,15 @@ import Footer from "./components/FooterComponent";
 import LoginComponent from "./components/LoginComponent";
 import { FaArrowDown } from "react-icons/fa";
 import { useEffect, useState } from "react";
+import SignInButtonComponent from "./components/SignInButtonComponent";
 
 export default function LandingPage() {
   
   const [opacity, setOpacity] = useState(1);
+
+  const handleSignIn = () => {
+    window.location.href = "/login";
+  }
 
   const handleScroll = () => {
     const scrollPosition = window.scrollY;
@@ -47,14 +52,23 @@ export default function LandingPage() {
         </div>
 
         <div
-          className={`md:hidden order-2 flex gap-2 text-lg text-center text-items-center transition-opacity duration-500`}
+          className="lg:hidden lg:w-full w-full"
+        >
+          <SignInButtonComponent 
+            onClick={handleSignIn} 
+            text="Sign in"
+          />
+        </div>
+
+        <div
+          className={`lg:hidden order-2 flex justify-center gap-2 text-lg text-center justify-items-center transition-opacity duration-500`}
           style={{ opacity }}
         >
           <FaArrowDown />
-          <p>Scroll to login!</p>
+          <p>Scroll to reach us!</p>
         </div>
 
-        <div className="lg:mr-20 lg:p-20 order-3 pt-10 mt-10 lg:justify-self-start">
+        <div className="hidden lg:block lg:mr-20 lg:p-20 order-3 pt-10 mt-10 lg:justify-self-start">
           <LoginComponent />
         </div>
         

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+import SignUpButtonComponent from "./SignUpButtonComponent";
 
 interface LoginFormData {
   email: string;
@@ -22,6 +23,10 @@ const LoginComponent: React.FC = () => {
       [name]: value,
     }));
   };
+
+  const handleSignUp = () => {
+    window.location.href = "/register";
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -59,12 +64,15 @@ const LoginComponent: React.FC = () => {
 
   return (
     <div className="flex justify-center items-center font-mulish">
-      <div className="p-8 lg:w-96">
-        <h2 className="text-4xl font-extrabold text-center lg:mb-6 text-blue">
-          Login
-        </h2>
+      <div className="p-8 lg:w-96 flex flex-col">
+
+        <div className="block text-center mt-8 pt-2 mb-2  text-blue">
+          <h1 className="font-bold text-4xl">Welcome Back</h1>
+          <h3 className="text-2xl">Login to your account</h3>
+        </div>
+
         {error && <p className="text-darkRed text-sm lg:mb-4 my-2">{error}</p>}
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-4 mt-4">
           <div>
             <label
               htmlFor="email"
@@ -125,6 +133,11 @@ const LoginComponent: React.FC = () => {
         <p className="py-1 text-right text-darkBlue hover:text-lightBlue">
           <a href="">Forgot your password?</a>
         </p>
+
+        <SignUpButtonComponent 
+          onClick={handleSignUp} 
+          text="Sign in"
+        />
       </div>
     </div>
   );
