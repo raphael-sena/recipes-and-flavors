@@ -1,0 +1,107 @@
+import React, { useState } from "react";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
+
+interface LoginFormData {
+  email: string;
+  password: string;
+}
+
+const LoginComponent: React.FC = () => {
+  const [formData, setFormData] = useState<LoginFormData>({
+    email: "",
+    password: "",
+  });
+  const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState<string>("");
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (formData.email && formData.password) {
+      console.log("Login enviado", formData);
+      setError("");
+    } else {
+      setError("Please enter all fields.");
+    }
+  };
+
+  return (
+    <div className="flex justify-center items-center font-mulish">
+      <div className="p-8 lg:w-96">
+        <h2 className="text-4xl font-extrabold text-center lg:mb-6 text-blue">
+          Login
+        </h2>
+        {error && <p className="text-darkRed text-sm lg:mb-4 my-2">{error}</p>}
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label
+              htmlFor="email"
+              className="block text-lg font-bold text-darkBlue"
+            >
+              E-mail
+            </label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-darkBlue"
+              placeholder="Enter your e-mail"
+            />
+          </div>
+
+          <div className="relative">
+            <label
+              htmlFor="password"
+              className="block text-lg font-bold text-blue"
+            >
+              Password
+            </label>
+            <div className="relative flex items-center">
+              <input
+                type={showPassword ? "text" : "password"}
+                id="password"
+                name="password"
+                value={formData.password}
+                onChange={handleChange}
+                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-darkBlue pr-10"
+                placeholder="Enter your password"
+              />
+              <div
+                className="absolute right-3 flex items-center cursor-pointer"
+                onClick={() => setShowPassword((prev) => !prev)}
+              >
+                {showPassword ? (
+                  <FaEyeSlash className="text-gray-500 hover:text-darkBlue" />
+                ) : (
+                  <FaEye className="text-gray-500 hover:text-darkBlue" />
+                )}
+              </div>
+            </div>
+          </div>
+
+          <button
+            type="submit"
+            className="w-full py-2 bg-lightBlue text-light rounded-lg hover:bg-darkBlue focus:outline-none focus:ring-2 focus:ring-darkBlue"
+          >
+            Sign in
+          </button>
+        </form>
+
+        <p className="py-1 text-right text-darkBlue hover:text-lightBlue">
+          <a href="">Forgot your password?</a>
+        </p>
+      </div>
+    </div>
+  );
+};
+
+export default LoginComponent;
