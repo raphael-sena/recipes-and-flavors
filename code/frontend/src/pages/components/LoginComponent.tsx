@@ -13,6 +13,7 @@ const LoginComponent: React.FC = () => {
   });
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string>("");
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -22,11 +23,35 @@ const LoginComponent: React.FC = () => {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (formData.email && formData.password) {
-      console.log("Login enviado", formData);
       setError("");
+      setLoading(true);
+
+      try {
+        const response = await fetch("http://localhost:8080/login", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formData),
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          console.log("Login successful:", data);
+          localStorage.setItem("authToken", data.token);
+           window.location.href = "/home";
+        } else {
+          setError(data.messsage || "invalid credentials");
+        }
+      } catch (error) {
+        setError("An error occurred, please try again.");
+      } finally {
+        setLoading(false); // Stop loading
+      }
     } else {
       setError("Please enter all fields.");
     }
@@ -91,8 +116,9 @@ const LoginComponent: React.FC = () => {
           <button
             type="submit"
             className="w-full py-2 bg-lightBlue text-light rounded-lg hover:bg-darkBlue focus:outline-none focus:ring-2 focus:ring-darkBlue"
+            disabled={loading} // Desabilita o botão durante o carregamento
           >
-            Sign in
+            {loading ? "Loading..." : "Sign in"}
           </button>
         </form>
 

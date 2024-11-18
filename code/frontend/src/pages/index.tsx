@@ -3,7 +3,7 @@ import LoginComponent from "./components/LoginComponent";
 import { FaArrowDown } from "react-icons/fa";
 import { useEffect, useState } from "react";
 
-export default function Page() {
+export default function LandingPage() {
   
   const [opacity, setOpacity] = useState(1);
 

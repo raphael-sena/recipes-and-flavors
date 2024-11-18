@@ -1,8 +1,12 @@
 import type { NextConfig } from "next";
 
-const nextConfig: NextConfig = {
-  /* config options here */
-  reactStrictMode: true,
-};
-
-export default nextConfig;
+module.exports = {
+  async rewrites() {
+    return [
+      {
+        source: '/',
+        destination: 'http://localhost:8080/',  // Endereço do seu backend
+      },
+    ]
+  },
+}
