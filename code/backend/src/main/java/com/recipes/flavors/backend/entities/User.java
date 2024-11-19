@@ -20,6 +20,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.util.HashSet;
@@ -36,16 +37,17 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "name", length = 60, nullable = false)
+    @Column(name = "name", length = 60)
     @NotBlank
     private String name;
 
-    @Column(name = "email", length = 60, nullable = false)
+    @Column(name = "email", length = 60, unique = true)
     @NotBlank
+    @Email
     private String email;
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    @Column(name = "password", length = 60, nullable = false)
+    @Column(name = "password", length = 60)
     @NotBlank
     @Size(min = 8, max = 60)
     private String password;
@@ -60,7 +62,7 @@ public class User {
     @JsonIgnoreProperties({"user", "user", "ingredients", "methods", "preparationTime", "cookTime", "totalTime", "servings", "dietType", "difficulty", "reviews"})
     private Set<Recipe> recipes = new HashSet<>();
 
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "tb_users_roles",
             joinColumns = @JoinColumn(name = "user_id"),

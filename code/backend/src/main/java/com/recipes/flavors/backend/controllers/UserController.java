@@ -108,6 +108,7 @@ public class UserController {
                 .created(uri)
                 .build();
     }
+
     @PutMapping("/{id}")
     public ResponseEntity<Void> update(@Valid @RequestBody UserUpdateDTO obj, @PathVariable Long id) {
         obj.setId(id);
