@@ -16,6 +16,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.validation.Valid;
+import java.io.IOException;
+import java.time.Duration;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -32,6 +34,9 @@ public class RecipeService {
 
     @Autowired
     private IngredientRepository ingredientRepository;
+
+    @Autowired
+    private UserService userService;
 
     @Autowired
     private UserRepository userRepository;
@@ -66,13 +71,17 @@ public class RecipeService {
         Recipe recipe = new Recipe();
         Recipe finalRecipe = recipe;
 
-        Optional<User> user = userRepository.findById(obj.getUserId());
-        recipe.setUser(user.get());
+        System.out.println("Usuário antes de decodificar: " + obj.getUserId());
+
+        Long userId = userService.extractUserIdFromJWT(String.valueOf(obj.getUserId()));
+        User user = userService.findById(userId);
+
+        recipe.setUser(user);
 
         recipe.setName(obj.getName());
         recipe.setImage(obj.getImage());
-        recipe.setPreparationTime(obj.getPreparationTime().toMinutes());
-        recipe.setCookTime(obj.getCookTime().toMinutes());
+        recipe.setPreparationTime(obj.getPreparationTime());
+        recipe.setCookTime(obj.getCookTime());
         recipe.setServings(obj.getServings());
         recipe.setDietType(obj.getDietType());
         recipe.setCuisineType(obj.getCuisineType());
@@ -164,8 +173,8 @@ public class RecipeService {
         }
 
         recipe.setImage(obj.getImage());
-        recipe.setPreparationTime(obj.getPreparationTime().toMinutes());
-        recipe.setCookTime(obj.getCookTime().toMinutes());
+        recipe.setPreparationTime(obj.getPreparationTime());
+        recipe.setCookTime(obj.getCookTime());
         recipe.setServings(obj.getServings());
         recipe.setDietType(obj.getDietType());
         recipe.setCuisineType(obj.getCuisineType());
@@ -175,7 +184,7 @@ public class RecipeService {
         return recipe;
     }
 
-    public Long totalTime(Long cookTime, Long preparationTime) {
-        return cookTime+preparationTime;
+    public Duration  totalTime(Duration  cookTime, Duration preparationTime) {
+        return cookTime.plus(preparationTime);
     }
 }
