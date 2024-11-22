@@ -63,10 +63,10 @@ const LoginComponent: React.FC = () => {
   };
 
   return (
-    <div className="flex justify-center items-center font-mulish">
+    <div className="flex justify-center items-center font-mulish text-darkBlue">
       <div className="p-8 lg:w-96 flex flex-col">
 
-        <div className="block text-center mt-8 pt-2 mb-2  text-blue">
+        <div className="block text-center mt-8 pt-2 mb-2">
           <h1 className="font-bold text-4xl">Welcome Back</h1>
           <h3 className="text-2xl">Login to your account</h3>
         </div>
@@ -94,7 +94,7 @@ const LoginComponent: React.FC = () => {
           <div className="relative">
             <label
               htmlFor="password"
-              className="block text-lg font-bold text-blue"
+              className="block text-lg font-bold"
             >
               Password
             </label>
