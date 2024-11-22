@@ -13,7 +13,9 @@ public enum CuisineType {
     JAPANESE,
     GERMAN,
     THAI,
-    MEXICAN;
+    MEXICAN,
+    FRENCH,
+    USA;
 
     public static List<DietType> getAllDietTypes() {
         return Arrays.asList(DietType.values());

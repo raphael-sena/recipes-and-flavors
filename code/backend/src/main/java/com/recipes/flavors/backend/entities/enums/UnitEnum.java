@@ -6,9 +6,9 @@ import jakarta.persistence.Table;
 public enum UnitEnum {
     GRAMS,
     KILOGRAMS,
-    LITRE,
-    TABLESPOON,
-    CUP,
-    TEASPOON,
+    LITERS,
+    TABLESPOONS,
+    CUPS,
+    TEASPOONS,
     UNITS
 }
