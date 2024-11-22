@@ -1,6 +1,7 @@
 import { Ingredient } from "./CreateRecipeComponent";
 import EnumSelectComponent from "./EnumComponents/EnumSelectComponent";
 import { UnitType } from "@/enums";
+import { IoIosAddCircle, IoIosRemoveCircle } from "react-icons/io";
 
 type IngredientComponentProps = {
   ingredients: Ingredient[];
@@ -65,18 +66,20 @@ const IngredientComponent: React.FC<IngredientComponentProps> = ({
           <button
             type="button"
             onClick={() => onRemoveIngredient(index)}
-            className="bg-red-500 text-white px-4 py-2 rounded-md w-full mb-2"
+            className="bg-red-500 text-white px-4 py-2 rounded-md w-full mb-2 flex items-center justify-center"
           >
-            Remove
+            <IoIosRemoveCircle />
+            <p className="px-2">Remove</p>
           </button>
         </div>
       ))}
       <button
         type="button"
         onClick={onAddIngredient}
-        className="bg-green-500 text-white px-4 py-2 rounded-md w-full"
-      >
-        <p>Add Ingredient</p>
+        className="bg-green-500 text-white px-4 py-2 rounded-md w-full flex items-center justify-center"
+      > 
+        <IoIosAddCircle />
+        <p className="px-2">Add Ingredient</p>
       </button>
     </div>
   );

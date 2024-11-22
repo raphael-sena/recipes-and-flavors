@@ -1,4 +1,5 @@
 import React from 'react';
+import { IoIosAddCircle, IoIosRemoveCircle } from 'react-icons/io';
 
 type Method = {
   description: string;
@@ -32,18 +33,20 @@ const MethodComponent = ({
           <button
             type="button"
             onClick={() => onRemoveMethod(index)}
-            className="bg-red-500 text-white px-4 py-2 rounded-md w-full"
+            className="bg-red-500 text-white px-4 py-2 rounded-md w-full flex items-center justify-center"
           >
-            Remove
+            <IoIosRemoveCircle />
+            <p className="px-2">Remove</p>
           </button>
         </div>
       ))}
       <button
         type="button"
         onClick={onAddMethod}
-        className="mb-2 w-full bg-green-500 text-white px-4 py-2 rounded-md"
+        className="mb-2 w-full bg-green-500 text-white px-4 py-2 rounded-md flex items-center justify-center"
       >
-        Add Method
+        <IoIosAddCircle />
+        <p className="px-2">Add Method</p>
       </button>
     </div>
   );

@@ -124,7 +124,7 @@ const LoginComponent: React.FC = () => {
           <button
             type="submit"
             className="w-full py-2 bg-lightBlue text-light rounded-lg hover:bg-darkBlue focus:outline-none focus:ring-2 focus:ring-darkBlue"
-            disabled={loading} // Desabilita o botão durante o carregamento
+            disabled={loading}
           >
             {loading ? "Loading..." : "Sign in"}
           </button>
