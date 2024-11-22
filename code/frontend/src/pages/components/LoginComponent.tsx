@@ -26,7 +26,7 @@ const LoginComponent: React.FC = () => {
 
   const handleSignUp = () => {
     window.location.href = "/register";
-  }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -47,7 +47,7 @@ const LoginComponent: React.FC = () => {
 
         if (response.ok) {
           console.log("Login successful:", data);
-          localStorage.setItem("authToken", data.token);
+          localStorage.setItem("authToken", data.accessToken);
            window.location.href = "/home";
         } else {
           setError(data.messsage || "invalid credentials");
@@ -55,7 +55,7 @@ const LoginComponent: React.FC = () => {
       } catch (error) {
         setError("An error occurred, please try again.");
       } finally {
-        setLoading(false); // Stop loading
+        setLoading(false);
       }
     } else {
       setError("Please enter all fields.");

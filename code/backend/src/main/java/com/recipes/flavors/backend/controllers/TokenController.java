@@ -55,7 +55,7 @@ public class TokenController {
                 .collect(Collectors.joining(" "));
 
         var claims = JwtClaimsSet.builder()
-                .issuer("dressManager")
+                .issuer("recipesAndFlavors")
                 .issuedAt(now)
                 .expiresAt(now.plusSeconds(expiresIn))
                 .subject(user.getId().toString())
