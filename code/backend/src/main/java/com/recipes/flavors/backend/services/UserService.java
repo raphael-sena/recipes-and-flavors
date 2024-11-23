@@ -10,6 +10,8 @@ import com.recipes.flavors.backend.services.exceptions.ObjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
@@ -30,6 +32,9 @@ public class UserService {
 
     @Autowired
     private RoleRepository roleRepository;
+
+    @Autowired
+    private JwtDecoder jwtDecoder;
 
     public List<User> findAll() {
         return userRepository.findAll();
@@ -115,6 +120,12 @@ public class UserService {
     public void updatePassword(User user, String newPassword) {
         user.setPassword(bCryptPasswordEncoder.encode(newPassword));
         userRepository.save(user);
+    }
+
+    public Long extractUserIdFromJWT(String jwt) {
+        Jwt decodedJwt = jwtDecoder.decode(jwt);
+        String userId = decodedJwt.getSubject();
+        return Long.valueOf(userId);
     }
 
 }

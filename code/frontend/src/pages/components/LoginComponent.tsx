@@ -26,7 +26,7 @@ const LoginComponent: React.FC = () => {
 
   const handleSignUp = () => {
     window.location.href = "/register";
-  }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -47,7 +47,7 @@ const LoginComponent: React.FC = () => {
 
         if (response.ok) {
           console.log("Login successful:", data);
-          localStorage.setItem("authToken", data.token);
+          localStorage.setItem("authToken", data.accessToken);
            window.location.href = "/home";
         } else {
           setError(data.messsage || "invalid credentials");
@@ -55,7 +55,7 @@ const LoginComponent: React.FC = () => {
       } catch (error) {
         setError("An error occurred, please try again.");
       } finally {
-        setLoading(false); // Stop loading
+        setLoading(false);
       }
     } else {
       setError("Please enter all fields.");
@@ -63,10 +63,10 @@ const LoginComponent: React.FC = () => {
   };
 
   return (
-    <div className="flex justify-center items-center font-mulish">
+    <div className="flex justify-center items-center font-mulish text-darkBlue">
       <div className="p-8 lg:w-96 flex flex-col">
 
-        <div className="block text-center mt-8 pt-2 mb-2  text-blue">
+        <div className="block text-center mt-8 pt-2 mb-2">
           <h1 className="font-bold text-4xl">Welcome Back</h1>
           <h3 className="text-2xl">Login to your account</h3>
         </div>
@@ -94,7 +94,7 @@ const LoginComponent: React.FC = () => {
           <div className="relative">
             <label
               htmlFor="password"
-              className="block text-lg font-bold text-blue"
+              className="block text-lg font-bold"
             >
               Password
             </label>
@@ -124,7 +124,7 @@ const LoginComponent: React.FC = () => {
           <button
             type="submit"
             className="w-full py-2 bg-lightBlue text-light rounded-lg hover:bg-darkBlue focus:outline-none focus:ring-2 focus:ring-darkBlue"
-            disabled={loading} // Desabilita o botão durante o carregamento
+            disabled={loading}
           >
             {loading ? "Loading..." : "Sign in"}
           </button>

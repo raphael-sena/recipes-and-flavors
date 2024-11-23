@@ -2,7 +2,7 @@ import React from "react";
 
 export default function Footer() {
   return (
-    <footer className="block font-mulish mt-7 pt-7">
+    <footer className="block font-mulish mt-7 pt-7 px-2 mx-2">
       <div className="grid grid-cols-2 divide-x divide-black sm:divide-0 lg:divide-x-0">
         <div className="flex flex-col justify-center pr-6 items-end">
           <img
@@ -58,7 +58,7 @@ export default function Footer() {
       </div>
 
       <div className="sm:block text-justify">
-        <div className="lg:flex lg:text-center justify-center lg:flex font-normal sm:text-sm lg:text-lg mt-3 pt-3">
+        <div className="lg:flex text-center justify-center lg:flex font-normal sm:text-sm lg:text-lg mt-3 pt-3">
           <p className="">&copy; <strong>2024 Recipes&Foods. All rights reserved</strong></p>
           <p>Designed with care by <strong>Raphael Sena A. Brito</strong> </p>
           <p>Links to<a href="/"><strong>Privacy Policy</strong></a> and <a href="/"><strong>Terms of Service</strong></a></p>

@@ -27,6 +27,7 @@ import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
 import javax.validation.constraints.NotNull;
+import java.time.Duration;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -69,16 +70,16 @@ public class Recipe {
 
     @Lob
     @Column(unique = true)
-    private byte[] image;
+    private String image;
 
     @Column(name = "preparationTime")
-    private Long preparationTime;
+    private Duration preparationTime;
 
     @Column(name = "cookTime")
-    private Long cookTime;
+    private Duration  cookTime;
 
     @Column(name = "totalTime")
-    private Long totalTime;
+    private Duration  totalTime;
 
     @Column(name = "servings")
     private Integer servings;

@@ -21,7 +21,7 @@ public class RecipeUpdateDTO {
     private String name;
     private List<Ingredient> ingredients;
     private List<Method> methods;
-    private byte[] image;
+    private String image;
     private Duration preparationTime;
     private Duration cookTime;
     private Integer servings;
