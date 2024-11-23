@@ -50,7 +50,7 @@ export default function CuisinesComponent({
         <span className="ml-2">▼</span>
       </button>
       {dropdownOpen && (
-        <div className="relative absolute mt-1 w-full bg-white border border-gray-300 rounded-lg shadow-lg z-50">
+        <div className="absolute mt-1 bg-white border border-gray-300 rounded-lg shadow-lg z-50">
           {cuisines.map((cuisine) => (
             <div
               key={cuisine.name}
