@@ -33,7 +33,7 @@ const MethodComponent = ({
           <button
             type="button"
             onClick={() => onRemoveMethod(index)}
-            className="bg-red-500 text-white px-4 py-2 rounded-md w-full flex items-center justify-center"
+            className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md w-full flex items-center justify-center"
           >
             <IoIosRemoveCircle />
             <p className="px-2">Remove</p>
@@ -43,7 +43,7 @@ const MethodComponent = ({
       <button
         type="button"
         onClick={onAddMethod}
-        className="mb-2 w-full bg-green-500 text-white px-4 py-2 rounded-md flex items-center justify-center"
+        className="mb-2 w-full bg-green-600  hover:bg-green-500 text-white px-4 py-2 rounded-md flex items-center justify-center"
       >
         <IoIosAddCircle />
         <p className="px-2">Add Method</p>

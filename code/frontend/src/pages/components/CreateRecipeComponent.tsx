@@ -117,8 +117,12 @@ const RecipeForm = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const preparationTime = `PT${recipeData.preparationTime}${recipeData.preparationTimeUnit[0].toUpperCase()}`;
-    const cookTime = `PT${recipeData.cookTime}${recipeData.cookTimeUnit[0].toUpperCase()}`;
+    const preparationTime = `PT${
+      recipeData.preparationTime
+    }${recipeData.preparationTimeUnit[0].toUpperCase()}`;
+    const cookTime = `PT${
+      recipeData.cookTime
+    }${recipeData.cookTimeUnit[0].toUpperCase()}`;
 
     const userId = localStorage.getItem("authToken");
 
@@ -145,12 +149,16 @@ const RecipeForm = () => {
 
     try {
       const token = localStorage.getItem("authToken");
-      const response = await axios.post("http://localhost:8080/recipe", recipePayload, {
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
+      const response = await axios.post(
+        "http://localhost:8080/recipe",
+        recipePayload,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
         }
-      });
+      );
       alert("Recipe created successfully!");
       console.log(response.data);
       setRecipeData({
@@ -197,191 +205,216 @@ const RecipeForm = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="font-mulish">
-      <h1 className="font-bold text-3xl">
+    <form onSubmit={handleSubmit} className="font-mulish items-center justify-items-center">
+      <h1 className="font-bold text-3xl xl:my-4 xl:text-center">
         Create Recipe
-        <hr className="h-px mb-2 bg-darkBlue border-0" />
+        <hr className="h-px mb-2 bg-darkBlue border-0 xl:hidden" />
       </h1>
 
-      {/* Nome da Receita */}
-      <div className="mb-4">
-        <label htmlFor="name" className="block text-lightBlue font-medium">
-          Recipe Name
-        </label>
-        <input
-          type="text"
-          id="name"
-          name="name"
-          value={recipeData.name}
-          onChange={handleChange}
-          className="mt-1 py-2 px-1 block w-full rounded-md focus:outline-none focus:ring-2 focus:ring-darkBlue"
-          required
-        />
-      </div>
+      <div className="xl:flex xl:flex-col-2 xl:gap-4 xl:items-center xl:justify-items-center mb-2">
+        {/* Informações da Receita */}
+        <div>
+          {/* Nome da Receita */}
+          <div className="mb-4">
+            <label htmlFor="name" className="block text-darkBlue text-2xl">
+              Recipe Name
+            </label>
+            <input
+              type="text"
+              id="name"
+              name="name"
+              value={recipeData.name}
+              onChange={handleChange}
+              className="mt-1 py-2 px-1 block w-full rounded-md focus:outline-none focus:ring-2 focus:ring-darkBlue"
+              required
+            />
+          </div>
 
-      <h3 className="text-2xl mb-2">Recipe Infos</h3>
-      <hr className="h-px mb-2 bg-darkBlue border-0" />
+          {/* Recipe Infos*/}
+          <div>
+            <h3 className="text-2xl mb-2 text-darkBlue">Recipe Infos</h3>
+            <hr className="h-px mb-2 bg-darkBlue border-0" />
 
-      {/* Upload de Imagem */}
-      <div className="mb-4">
-        <label htmlFor="image" className="block text-lightBlue font-medium">
-          Upload recipe image...
-        </label>
-        <input
-          type="file"
-          name="image"
-          value={recipeData.image}
-          onChange={handleImageUpload}
-          accept="image/*"
-          className="input-class text-darkBlue"
-        />
-      </div>
-
-      {/* Tipo de Cozinha e Número de Porções */}
-      <div className="flex space-x-2 mb-2">
-        <div className="w-full">
-          <label htmlFor="cuisine" className="block text-lightBlue font-medium">
-            Cuisine Type
-          </label>
-          <CuisinesComponent
-            selectedCuisine={recipeData.cuisineType}
-            onChange={(e) =>
-              setRecipeData({ ...recipeData, cuisineType: e.target.value })
-            }
-          />
-        </div>
-
-        <div className="w-full">
-          <label
-            htmlFor="servings"
-            className="block text-lightBlue font-medium"
-          >
-            Total Servings
-          </label>
-          <input
-            type="number"
-            name="servings"
-            value={recipeData.servings}
-            onChange={handleChange}
-            className="py-2 px-1 block w-full rounded-md focus:outline-none focus:ring-2 focus:ring-darkBlue"
-          />
-        </div>
-      </div>
-
-      {/* Dificuldade */}
-      <DifficultyComponent
-        selectedDifficulty={recipeData.difficulty as Difficulty}
-        onChange={(e) =>
-          setRecipeData({ ...recipeData, difficulty: e.target.value })
-        }
-      />
-
-      {/* Categoria */}
-      <CategoryComponent
-        selectedCategory={recipeData.category as Category}
-        onChange={(e) =>
-          setRecipeData({ ...recipeData, category: e.target.value })
-        }
-      />
-
-      {/* Dieta */}
-      <DietTypeComponent
-        selectedDietType={recipeData.dietType as DietType}
-        onChange={(e) =>
-          setRecipeData({ ...recipeData, dietType: e.target.value })
-        }
-      />
-
-      {/* ingredientes */}
-      <IngredientComponent
-        ingredients={ingredients}
-        onAddIngredient={handleAddIngredient}
-        onRemoveIngredient={handleRemoveIngredient}
-        onChange={handleIngredientChange}
-      />
-
-      {/* Métodos */}
-      <MethodComponent
-        methods={methods}
-        onAddMethod={handleAddMethod}
-        onRemoveMethod={handleRemoveMethod}
-        onChange={handleMethodChange}
-      />
-
-      {/* Infos de Tempo */}
-      <div className="my-4">
-        <h3 className="text-2xl mb-1">Time</h3>
-        <hr className="h-px mb-2 bg-darkBlue border-0" />
-
-        <div className="mb-2 rounded-md">
-          <div className="flex text-center text-light rounded gap-2">
-            {/* Preparation Time */}
-            <div className="bg-lightBlue px-2 py-3 rounded-md w-full">
-              <label className="flex items-center mb-1">
-                <IoIosTime />
-                <p className="px-2">Preparation Time</p>
-              </label>
-              <div className="flex justify-center">
-                <input
-                  type="number"
-                  name="preparationTime"
-                  value={recipeData.preparationTime}
-                  onChange={handleChange}
-                  className="py-1 px-2 block w-12 rounded-md focus:outline-none focus:ring-2 focus:ring-darkBlue bg-lightBlue mr-1"
-                />
-                <select
-                  name="preparationTimeUnit"
-                  value={recipeData.preparationTimeUnit}
-                  onChange={handleChange}
-                  className="bg-lightBlue rounded"
+            <div className="lg:grid lg:grid-row-2">
+              {/* Upload de Imagem */}
+              <div className="mb-2">
+                <label
+                  htmlFor="image"
+                  className="block text-lightBlue font-medium"
                 >
-                  <option className="text-darkBlue" value="min">
-                    min
-                  </option>
-                  <option className="text-darkBlue" value="hour">
-                    hour
-                  </option>
-                </select>
+                  Upload recipe image...
+                </label>
+                <input
+                  type="file"
+                  name="image"
+                  value={recipeData.image}
+                  onChange={handleImageUpload}
+                  accept="image/*"
+                  className="input-class text-darkBlue w-full"
+                />
+              </div>
+
+              {/* Tipo de Cozinha */}
+              <div className="flex space-x-2 mb-2">
+                <div className="w-full">
+                  <label
+                    htmlFor="cuisine"
+                    className="block text-lightBlue font-medium"
+                  >
+                    Cuisine Type
+                  </label>
+                  <CuisinesComponent
+                    selectedCuisine={recipeData.cuisineType}
+                    onChange={(e) =>
+                      setRecipeData({
+                        ...recipeData,
+                        cuisineType: e.target.value,
+                      })
+                    }
+                  />
+                </div>
               </div>
             </div>
 
-            {/* Cook Time */}
-            <div className="bg-lightBlue px-2 py-3 rounded-md w-full">
-              <label className="flex items-center mb-1">
-                <IoIosTime />
-                <p className="px-2">Cook Time</p>
-              </label>
-              <div className="flex justify-center">
+            <div className="lg:grid lg:grid-rows-2 lg:grid-flow-col lg:gap-2">
+              {/* Número de Porções */}
+              <div className="lg:w-full lg:pr-2">
+                <label
+                  htmlFor="servings"
+                  className="block text-lightBlue font-medium mb-2"
+                >
+                  Total Servings
+                </label>
                 <input
                   type="number"
-                  name="cookTime"
-                  value={recipeData.cookTime}
+                  name="servings"
+                  value={recipeData.servings}
                   onChange={handleChange}
-                  className="py-1 px-2 block w-12 rounded-md focus:outline-none focus:ring-2 focus:ring-darkBlue bg-lightBlue mr-1"
+                  className="py-2 px-1 block w-full rounded-md focus:outline-none focus:ring-2 focus:ring-darkBlue"
                 />
-                <select
-                  name="cookTimeUnit"
-                  value={recipeData.cookTimeUnit}
-                  onChange={handleChange}
-                  className="bg-lightBlue rounded"
-                >
-                  <option className="text-darkBlue" value="min">
-                    min
-                  </option>
-                  <option className="text-darkBlue" value="hour">
-                    hour
-                  </option>
-                </select>
+              </div>
+
+              {/* Dificuldade */}
+              <DifficultyComponent
+                selectedDifficulty={recipeData.difficulty as Difficulty}
+                onChange={(e) =>
+                  setRecipeData({ ...recipeData, difficulty: e.target.value })
+                }
+              />
+
+              {/* Categoria */}
+              <CategoryComponent
+                selectedCategory={recipeData.category as Category}
+                onChange={(e) =>
+                  setRecipeData({ ...recipeData, category: e.target.value })
+                }
+              />
+
+              {/* Dieta */}
+              <DietTypeComponent
+                selectedDietType={recipeData.dietType as DietType}
+                onChange={(e) =>
+                  setRecipeData({ ...recipeData, dietType: e.target.value })
+                }
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Ingredientes e Preparo*/}
+        <div className="xl:mx-12 xl:px-12">
+          {/* ingredientes */}
+          <IngredientComponent
+            ingredients={ingredients}
+            onAddIngredient={handleAddIngredient}
+            onRemoveIngredient={handleRemoveIngredient}
+            onChange={handleIngredientChange}
+          />
+
+          {/* Métodos */}
+          <MethodComponent
+            methods={methods}
+            onAddMethod={handleAddMethod}
+            onRemoveMethod={handleRemoveMethod}
+            onChange={handleMethodChange}
+          />
+
+          {/* Infos de Tempo */}
+          <div className="my-4">
+            <h3 className="text-2xl mb-1">Time</h3>
+            <hr className="h-px mb-2 bg-darkBlue border-0" />
+
+            <div className="mb-2 rounded-md">
+              <div className="flex text-center text-light rounded gap-2">
+                {/* Preparation Time */}
+                <div className="bg-lightBlue px-2 py-3 rounded-md w-full">
+                  <label className="flex items-center mb-1">
+                    <IoIosTime />
+                    <p className="px-2">Preparation Time</p>
+                  </label>
+                  <div className="flex justify-center">
+                    <input
+                      type="number"
+                      name="preparationTime"
+                      value={recipeData.preparationTime}
+                      onChange={handleChange}
+                      className="py-1 px-2 block w-12 rounded-md focus:outline-none focus:ring-2 focus:ring-darkBlue bg-lightBlue mr-1"
+                    />
+                    <select
+                      name="preparationTimeUnit"
+                      value={recipeData.preparationTimeUnit}
+                      onChange={handleChange}
+                      className="bg-lightBlue rounded"
+                    >
+                      <option className="text-darkBlue" value="min">
+                        min
+                      </option>
+                      <option className="text-darkBlue" value="hour">
+                        hour
+                      </option>
+                    </select>
+                  </div>
+                </div>
+
+                {/* Cook Time */}
+                <div className="bg-lightBlue px-2 py-3 rounded-md w-full">
+                  <label className="flex items-center mb-1">
+                    <IoIosTime />
+                    <p className="px-2">Cook Time</p>
+                  </label>
+                  <div className="flex justify-center">
+                    <input
+                      type="number"
+                      name="cookTime"
+                      value={recipeData.cookTime}
+                      onChange={handleChange}
+                      className="py-1 px-2 block w-12 rounded-md focus:outline-none focus:ring-2 focus:ring-darkBlue bg-lightBlue mr-1"
+                    />
+                    <select
+                      name="cookTimeUnit"
+                      value={recipeData.cookTimeUnit}
+                      onChange={handleChange}
+                      className="bg-lightBlue rounded"
+                    >
+                      <option className="text-darkBlue" value="min">
+                        min
+                      </option>
+                      <option className="text-darkBlue" value="hour">
+                        hour
+                      </option>
+                    </select>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      <div className="text-white font-bold text-lg">
+      <div className="text-white font-bold text-lg xl:w-80">
         <button
           type="submit"
-          className="bg-lightBlue  px-4 py-2 rounded-xl w-full mb-2"
+          className="bg-lightBlue hover:bg-darkBlue px-4 py-2 rounded-xl w-full mb-2"
         >
           Create New Recipe
         </button>
@@ -389,7 +422,7 @@ const RecipeForm = () => {
         <button
           type="button"
           onClick={discardChanges}
-          className="bg-darkRed  px-4 py-2 rounded-xl w-full mb-2"
+          className="bg-red-500 hover:bg-red-600 px-4 py-2 rounded-xl w-full mb-2"
         >
           Discard Changes
         </button>

@@ -49,9 +49,9 @@ const Navbar = () => {
   }, []);
 
   return (
-    <div className="md:flex md:min-h-screen">
+    <div>
       {/* Menu fixo à esquerda em telas grandes */}
-      <nav className="hidden md:flex md:flex-col bg-background text-white md:w-64 md:fixed md:top-0 md:left-0">
+      <nav className="hidden md:flex md:flex-col bg-background text-white md:w-64 md:fixed md:top-0 md:left-0 md:max-h-full">
         <div className="flex items-center justify-center h-16 mt-6 bg-background">
           <a href="/home">
             <img

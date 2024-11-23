@@ -66,7 +66,7 @@ const IngredientComponent: React.FC<IngredientComponentProps> = ({
           <button
             type="button"
             onClick={() => onRemoveIngredient(index)}
-            className="bg-red-500 text-white px-4 py-2 rounded-md w-full mb-2 flex items-center justify-center"
+            className="hover:bg-red-600 bg-red-500 text-white px-4 py-2 rounded-md w-full mb-2 flex items-center justify-center"
           >
             <IoIosRemoveCircle />
             <p className="px-2">Remove</p>
@@ -76,7 +76,7 @@ const IngredientComponent: React.FC<IngredientComponentProps> = ({
       <button
         type="button"
         onClick={onAddIngredient}
-        className="bg-green-500 text-white px-4 py-2 rounded-md w-full flex items-center justify-center"
+        className="hover:bg-green-500 bg-green-600 text-white px-4 py-2 rounded-md w-full flex items-center justify-center"
       > 
         <IoIosAddCircle />
         <p className="px-2">Add Ingredient</p>
