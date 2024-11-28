@@ -22,7 +22,7 @@ type Method = {
 const RecipeForm = () => {
   const [ingredients, setIngredients] = useState<Ingredient[]>([]);
   const [methods, setMethods] = useState<Method[]>([]);
-  const [image, setImage] = useState<string | null>(null);
+  const [image, setImage] = useState<File | null>(null);
   const [recipeData, setRecipeData] = useState({
     userId: "",
     name: "",
@@ -70,12 +70,6 @@ const RecipeForm = () => {
     setIngredients(updatedIngredients);
   };
 
-  const handleUnitChange = (index: number, value: UnitType) => {
-    const updatedIngredients = [...ingredients];
-    updatedIngredients[index].unit = value;
-    setIngredients(updatedIngredients);
-  };
-
   const handleAddMethod = () => {
     setMethods([...methods, { description: "" }]);
   };
@@ -90,14 +84,34 @@ const RecipeForm = () => {
     setMethods(updatedMethods);
   };
 
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
-      const file = e.target.files[0];
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImage(reader.result as string); // The result is a base64 string
-      };
-      reader.readAsDataURL(file); // This will trigger the onloadend event
+      setImage(e.target.files[0]);
+    }
+  };
+
+  const getBase64Image = (base64) => {
+    return `data:image/png;base64,${base64}`;
+  };
+
+  const handleUploadImage = async (recipeId: number) => {
+    if (!image) return;
+    const formData = new FormData();
+    formData.append("image", image);
+  
+    try {
+      const token = localStorage.getItem("authToken");
+      console.log("Uploading image for recipeId:", recipeId);
+      await axios.post(`http://localhost:8080/recipe/${recipeId}/image`, formData, {
+        headers: { 
+          "Content-Type": "multipart/form-data",
+          "Authorization": `Bearer ${token}`,
+        },
+        
+      });
+      alert("Imagem carregada com sucesso!");
+    } catch (error) {
+      console.error("Erro ao carregar imagem:", error);
     }
   };
 
@@ -129,7 +143,7 @@ const RecipeForm = () => {
     const recipePayload = {
       userId: userId,
       name: recipeData.name,
-      image: image,
+      image: recipeData.image,
       dietType: recipeData.dietType.toUpperCase(),
       preparationTime,
       cookTime,
@@ -148,6 +162,8 @@ const RecipeForm = () => {
     };
 
     try {
+      let createdOrUpdatedItemId = null;
+      
       const token = localStorage.getItem("authToken");
       const response = await axios.post(
         "http://localhost:8080/recipe",
@@ -159,6 +175,14 @@ const RecipeForm = () => {
           },
         }
       );
+
+      createdOrUpdatedItemId = response.data.recipe.id;
+      console.log("createdOrUpdatedItemId:", createdOrUpdatedItemId);
+
+      if (image && createdOrUpdatedItemId !== null) {
+        await handleUploadImage(createdOrUpdatedItemId);
+      }
+
       alert("Recipe created successfully!");
       console.log(response.data);
       setRecipeData({
@@ -237,23 +261,37 @@ const RecipeForm = () => {
 
             <div className="lg:grid lg:grid-row-2">
               {/* Upload de Imagem */}
-              <div className="mb-2">
-                <label
-                  htmlFor="image"
-                  className="block text-lightBlue font-medium"
-                >
-                  Upload recipe image...
-                </label>
-                <input
-                  type="file"
-                  name="image"
-                  value={recipeData.image}
-                  onChange={handleImageUpload}
-                  accept="image/*"
-                  className="input-class text-darkBlue w-full"
-                />
-              </div>
+              <div className="flex justify-between">
+                <div className="mb-2 w-2/3">
+                  <label
+                    htmlFor="image"
+                    className="block text-lightBlue font-medium"
+                  >
+                    Upload recipe image...
+                  </label>
+                  <input
+                    type="file"
+                    name="image"
+                    onChange={handleImageChange}
+                    accept="image/*"
+                    className="input-class text-darkBlue w-full"
+                  />
+                </div>
 
+                {recipeData.image && (
+                <div className="mb-2 w-1/3">
+                  <h4 className="text-darkBlue">Recipe Image</h4>
+                  <img
+                    src={recipeData.image}
+                    alt="Recipe"
+                    className="w-full rounded-md mt-2"
+                  />
+                </div>
+                )}
+              </div>
+            </div>
+
+            <div className="flex flex-wrap gap-2 justify-start lg:grid lg:grid-rows-2 lg:grid-flow-col lg:gap-2">
               {/* Tipo de Cozinha */}
               <div className="flex space-x-2 mb-2">
                 <div className="w-full">
@@ -274,14 +312,20 @@ const RecipeForm = () => {
                   />
                 </div>
               </div>
-            </div>
 
-            <div className="lg:grid lg:grid-rows-2 lg:grid-flow-col lg:gap-2">
+              {/* Dieta */}
+              <DietTypeComponent
+                selectedDietType={recipeData.dietType as DietType}
+                onChange={(e) =>
+                  setRecipeData({ ...recipeData, dietType: e.target.value })
+                }
+              />
+
               {/* Número de Porções */}
-              <div className="lg:w-full lg:pr-2">
+              <div className="lg:w-full lg:pr-2 mb-2">
                 <label
                   htmlFor="servings"
-                  className="block text-lightBlue font-medium mb-2"
+                  className="block text-lightBlue font-medium"
                 >
                   Total Servings
                 </label>
@@ -307,14 +351,6 @@ const RecipeForm = () => {
                 selectedCategory={recipeData.category as Category}
                 onChange={(e) =>
                   setRecipeData({ ...recipeData, category: e.target.value })
-                }
-              />
-
-              {/* Dieta */}
-              <DietTypeComponent
-                selectedDietType={recipeData.dietType as DietType}
-                onChange={(e) =>
-                  setRecipeData({ ...recipeData, dietType: e.target.value })
                 }
               />
             </div>
