@@ -17,6 +17,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.net.URI;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/recipe")
@@ -37,10 +38,12 @@ public class RecipeController {
 
     @PreAuthorize("permitAll()")
     @PostMapping
-    public ResponseEntity<Void> create(@Valid @RequestBody RecipeCreateDTO obj) {
+    public ResponseEntity<Recipe>create(@Valid @RequestBody RecipeCreateDTO obj) {
 
         Recipe recipe = this.recipeService.fromDTO(obj);
         Recipe newRecipe = this.recipeService.create(recipe);
+
+        System.out.println("Saved Recipe ID: " + newRecipe.getId());
 
         URI uri = ServletUriComponentsBuilder
                 .fromCurrentRequest()
@@ -50,7 +53,7 @@ public class RecipeController {
 
         return ResponseEntity
                 .created(uri)
-                .build();
+                .body(newRecipe);
     }
 
     @PutMapping("/{id}")
@@ -78,6 +81,9 @@ public class RecipeController {
     public ResponseEntity<?> uploadImage(@PathVariable Long id,
                                          @RequestParam("image") MultipartFile file) {
         try {
+            System.out.println("Recebendo imagem: " + file.getOriginalFilename());
+            System.out.println("Tamanho do arquivo: " + file.getSize());
+
             recipeService.saveImage(id, file);
             return ResponseEntity
                     .ok()

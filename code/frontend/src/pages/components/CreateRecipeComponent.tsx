@@ -85,30 +85,32 @@ const RecipeForm = () => {
   };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    console.log("Selected image:", e.target.files?.[0]);
     if (e.target.files && e.target.files[0]) {
       setImage(e.target.files[0]);
     }
   };
 
-  const getBase64Image = (base64) => {
-    return `data:image/png;base64,${base64}`;
-  };
-
   const handleUploadImage = async (recipeId: number) => {
-    if (!image) return;
+    if (!image) {
+      console.error("Nenhuma imagem selecionada.");
+      return;
+    }
     const formData = new FormData();
-    formData.append("image", image);
+    formData.append("image", image); // O nome deve ser exatamente "image"
   
+    const token = localStorage.getItem("authToken");
     try {
-      const token = localStorage.getItem("authToken");
       console.log("Uploading image for recipeId:", recipeId);
+      console.log("FormData content:", formData.get("image")); // Adicione este log para verificar o conteúdo
+  
       await axios.post(`http://localhost:8080/recipe/${recipeId}/image`, formData, {
-        headers: { 
+        headers: {
           "Content-Type": "multipart/form-data",
           "Authorization": `Bearer ${token}`,
         },
-        
       });
+  
       alert("Imagem carregada com sucesso!");
     } catch (error) {
       console.error("Erro ao carregar imagem:", error);
@@ -143,7 +145,6 @@ const RecipeForm = () => {
     const recipePayload = {
       userId: userId,
       name: recipeData.name,
-      image: recipeData.image,
       dietType: recipeData.dietType.toUpperCase(),
       preparationTime,
       cookTime,
@@ -159,10 +160,12 @@ const RecipeForm = () => {
       methods: methods.map((method) => ({
         description: method.description,
       })),
+
     };
 
     try {
       let createdOrUpdatedItemId = null;
+      console.log("Image state at submit:", image);
       
       const token = localStorage.getItem("authToken");
       const response = await axios.post(
@@ -176,8 +179,11 @@ const RecipeForm = () => {
         }
       );
 
-      createdOrUpdatedItemId = response.data.recipe.id;
-      console.log("createdOrUpdatedItemId:", createdOrUpdatedItemId);
+      console.log("Response data:", response.data);
+
+      createdOrUpdatedItemId = response.data?.id || response.data.recipe?.id;
+      console.log("Response data:", response.data);
+      console.log("Recipe ID:", createdOrUpdatedItemId);
 
       if (image && createdOrUpdatedItemId !== null) {
         await handleUploadImage(createdOrUpdatedItemId);
@@ -185,6 +191,7 @@ const RecipeForm = () => {
 
       alert("Recipe created successfully!");
       console.log(response.data);
+     
       setRecipeData({
         userId: "",
         name: "",
@@ -229,12 +236,11 @@ const RecipeForm = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="font-mulish items-center justify-items-center">
+    <form onSubmit={handleSubmit} className="font-mulish lg:items-center lg:justify-items-center">
       <h1 className="font-bold text-3xl xl:my-4 xl:text-center">
         Create Recipe
-        <hr className="h-px mb-2 bg-darkBlue border-0 xl:hidden" />
+        <hr className="h-px mb-2 bg-darkBlue border-0 xl:hidden"/>
       </h1>
-
       <div className="xl:flex xl:flex-col-2 xl:gap-4 xl:items-center xl:justify-items-center mb-2">
         {/* Informações da Receita */}
         <div>
