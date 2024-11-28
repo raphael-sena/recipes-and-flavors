@@ -5,13 +5,17 @@ import com.recipes.flavors.backend.entities.dto.recipe.RecipeCreateDTO;
 import com.recipes.flavors.backend.entities.dto.recipe.RecipeUpdateDTO;
 import com.recipes.flavors.backend.services.RecipeService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
+import java.io.IOException;
 import java.net.URI;
 
 @RestController
@@ -68,5 +72,28 @@ public class RecipeController {
         return ResponseEntity
                 .noContent()
                 .build();
+    }
+
+    @PostMapping("/{id}/image")
+    public ResponseEntity<?> uploadImage(@PathVariable Long id,
+                                         @RequestParam("image") MultipartFile file) {
+        try {
+            recipeService.saveImage(id, file);
+            return ResponseEntity
+                    .ok()
+                    .body("Image saved successfully!");
+        } catch (IOException e) {
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error saving the image.");
+        }
+    }
+
+    @GetMapping("/{id}/image")
+    public ResponseEntity<byte[]> getImage(@PathVariable Long id) {
+        byte[] image = recipeService.retrieveImage(id);
+        return ResponseEntity.ok()
+                .contentType(MediaType.IMAGE_JPEG)
+                .body(image);
     }
 }

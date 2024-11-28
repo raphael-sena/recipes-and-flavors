@@ -14,10 +14,12 @@ import com.recipes.flavors.backend.services.exceptions.ObjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import java.io.IOException;
 import java.time.Duration;
+import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -79,7 +81,9 @@ public class RecipeService {
         recipe.setUser(user);
 
         recipe.setName(obj.getName());
-        recipe.setImage(obj.getImage());
+        if (obj.getImage() != null) {
+            recipe.setImage(Base64.getDecoder().decode(obj.getImage()));
+        }
         recipe.setPreparationTime(obj.getPreparationTime());
         recipe.setCookTime(obj.getCookTime());
         recipe.setServings(obj.getServings());
@@ -172,7 +176,9 @@ public class RecipeService {
             methodRepository.save(method); // Salva o método atualizado ou novo
         }
 
-        recipe.setImage(obj.getImage());
+        if (obj.getImage() != null) {
+            recipe.setImage(Base64.getDecoder().decode(obj.getImage()));
+        }
         recipe.setPreparationTime(obj.getPreparationTime());
         recipe.setCookTime(obj.getCookTime());
         recipe.setServings(obj.getServings());
@@ -186,5 +192,18 @@ public class RecipeService {
 
     public Duration  totalTime(Duration  cookTime, Duration preparationTime) {
         return cookTime.plus(preparationTime);
+    }
+
+    @Transactional
+    public void saveImage(Long id, MultipartFile file) throws IOException {
+        Recipe recipe = findById(id);
+        recipe.setImage(file.getBytes());
+        recipeRepository.save(recipe);
+    }
+
+    @Transactional
+    public byte[] retrieveImage(Long id) {
+        Recipe recipe = findById(id);
+        return recipe.getImage();
     }
 }
