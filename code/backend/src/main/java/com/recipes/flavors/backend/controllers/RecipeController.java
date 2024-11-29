@@ -3,7 +3,6 @@ package com.recipes.flavors.backend.controllers;
 import com.recipes.flavors.backend.entities.Recipe;
 import com.recipes.flavors.backend.entities.dto.recipe.RecipeCreateDTO;
 import com.recipes.flavors.backend.entities.dto.recipe.RecipeDTO;
-import com.recipes.flavors.backend.entities.dto.recipe.RecipeUpdateDTO;
 import com.recipes.flavors.backend.services.RecipeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,7 +20,9 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.net.URI;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/recipe")
@@ -41,7 +42,8 @@ public class RecipeController {
     }
 
     @GetMapping("/my-recipes")
-    public ResponseEntity<List<Recipe>> getMyRecipes() {
+    public ResponseEntity<Map<String, Object>> getMyRecipes(@RequestParam(defaultValue = "0") int offset,
+                                                            @RequestParam(defaultValue = "10") int limit) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         if (authentication == null || !authentication.isAuthenticated()) {
@@ -51,12 +53,17 @@ public class RecipeController {
         }
 
         Jwt jwt = (Jwt) authentication.getPrincipal();
-        System.out.println("JWT Claims: " + jwt.getClaims());
         Long userId = Long.valueOf(jwt.getClaimAsString("sub"));
 
-        List<Recipe> recipes = recipeService.findRecipesByUserId(userId);
+        List<Recipe> recipes = recipeService.findRecipesByUserId(userId, offset, limit);
 
-        return ResponseEntity.ok(recipes);
+        Long totalCount = recipeService.countRecipesByUserId(userId);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("recipes", recipes);
+        response.put("totalCount", totalCount);
+
+        return ResponseEntity.ok(response);
     }
 
     @PreAuthorize("permitAll()")

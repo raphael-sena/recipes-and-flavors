@@ -6,13 +6,14 @@ import com.recipes.flavors.backend.entities.Recipe;
 import com.recipes.flavors.backend.entities.User;
 import com.recipes.flavors.backend.entities.dto.recipe.RecipeCreateDTO;
 import com.recipes.flavors.backend.entities.dto.recipe.RecipeDTO;
-import com.recipes.flavors.backend.entities.dto.recipe.RecipeUpdateDTO;
 import com.recipes.flavors.backend.repositories.IngredientRepository;
 import com.recipes.flavors.backend.repositories.MethodRepository;
 import com.recipes.flavors.backend.repositories.RecipeRepository;
 import com.recipes.flavors.backend.repositories.UserRepository;
 import com.recipes.flavors.backend.services.exceptions.ObjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -51,8 +52,10 @@ public class RecipeService {
                 "Receita não encontrada! Id: " + id + ", Tipo: " + Recipe.class.getName()));
     }
 
-    public List<Recipe> findRecipesByUserId(Long userId) {
-        return recipeRepository.findByUserId(userId); // Método que deve estar implementado no seu repositório
+    @Transactional
+    public List<Recipe> findRecipesByUserId(Long userId, int offset, int limit) {
+        Pageable pageable = PageRequest.of(offset / limit, limit);
+        return recipeRepository.findByUserId(userId, pageable).getContent();
     }
 
     @Transactional
@@ -210,5 +213,9 @@ public class RecipeService {
     public byte[] retrieveImage(Long id) {
         Recipe recipe = findById(id);
         return recipe.getImage();
+    }
+
+    public Long countRecipesByUserId(Long userId) {
+        return recipeRepository.countByUserId(userId);
     }
 }

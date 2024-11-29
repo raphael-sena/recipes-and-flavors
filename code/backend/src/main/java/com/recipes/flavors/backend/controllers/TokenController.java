@@ -41,12 +41,9 @@ public class TokenController {
 
         var user = userOptional.get();
 
-        System.out.println("Usuário: " + user);
-
         if (!bCryptPasswordEncoder.matches(loginRequest.password(), user.getPassword())) {
             throw new BadCredentialsException("Usuário ou senha inválidos");
         }
-
 
         var now = Instant.now();
         var expiresIn = 3600L; // Token válido por 1 hora

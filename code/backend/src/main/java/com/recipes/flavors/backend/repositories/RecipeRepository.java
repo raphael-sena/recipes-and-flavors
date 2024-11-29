@@ -1,13 +1,17 @@
 package com.recipes.flavors.backend.repositories;
 
 import com.recipes.flavors.backend.entities.Recipe;
+import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
+import org.springframework.data.domain.Pageable;
 
 @Repository
 public interface RecipeRepository extends JpaRepository<Recipe, Long> {
 
-    List<Recipe> findByUserId(Long userId);
+
+    Page<Recipe> findByUserId(Long userId, Pageable pageable);
+
+    Long countByUserId(Long userId);
 }
