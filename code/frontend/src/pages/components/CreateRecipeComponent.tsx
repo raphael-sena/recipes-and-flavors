@@ -8,16 +8,8 @@ import { DietTypeComponent } from "./EnumComponents/DietTypeComponent";
 import IngredientComponent from "./IngredientComponent";
 import MethodComponent from "./MethodComponent";
 import { IoIosTime } from "react-icons/io";
-
-export type Ingredient = {
-  name: string;
-  quantity: number;
-  unit: UnitType;
-};
-
-type Method = {
-  description: string;
-};
+import { Ingredient } from "@/models/Ingredient";
+import { Method } from "@/models/Method";
 
 const RecipeForm = () => {
   const [ingredients, setIngredients] = useState<Ingredient[]>([]);
