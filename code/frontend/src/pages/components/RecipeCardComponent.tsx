@@ -2,28 +2,11 @@ import { CuisineType } from "@/enums";
 import { Recipe } from "@/models/Recipe";
 import Flag from "react-world-flags";
 import { cuisines } from "./EnumComponents/CuisinesComponent";
-import { formatTime } from "@/services/TimeService";
+import { formatDuration } from "@/services/TimeService";
 
 interface RecipeCardProps {
   recipe: Recipe;
 }
-
-const getFlagByCuisine = (cuisine: CuisineType): React.ReactNode => {
-  const flags = {
-    [CuisineType.ITALIAN]: <Flag code="IT" />,
-    [CuisineType.BRAZILIAN]: <Flag code="BR" />,
-    [CuisineType.CHINESE]: <Flag code="CN" />,
-    [CuisineType.INDIAN]: <Flag code="IN" />,
-    [CuisineType.JAPANESE]: <Flag code="JP" />,
-    [CuisineType.GERMAN]: <Flag code="DE" />,
-    [CuisineType.THAI]: <Flag code="TH" />,
-    [CuisineType.MEXICAN]: <Flag code="MX" />,
-    [CuisineType.FRENCH]: <Flag code="FR" />,
-    [CuisineType.USA]: <Flag code="US" />,
-  };
-
-  return flags[cuisine] || null;
-};
 
 const RecipeCard: React.FC<RecipeCardProps> = ({ recipe }) => {
   const cuisine = cuisines.find(
@@ -34,8 +17,9 @@ const RecipeCard: React.FC<RecipeCardProps> = ({ recipe }) => {
     const imageBase64 = `data:image/png;base64,${base64}`;
     return imageBase64;
   };
+  
   return (
-    <div className="bg-white rounded-lg overflow-hidden shadow-lg border m-2 mb-4 h-72" style={{width: 350, height: 300}}>
+    <div className="bg-white rounded-lg overflow-hidden shadow-lg border m-2 mb-4 h-72 z-40" style={{width: 350, height: 300}}>
 
       {/* Imagem, avaliações e bandeira */}
       <div className="relative w-full" style={{ height: 120 }}>
@@ -76,10 +60,10 @@ const RecipeCard: React.FC<RecipeCardProps> = ({ recipe }) => {
       </div>
 
       {/* Título, tempo de preparo, categoria e autor */}
-      <div className="p-4 relative top-16 text-darkBlue bg-white rounded-b-lg h-full">
+      <div className="p-4 relative top-16 text-darkBlue bg-white rounded-b-lg h-full hover:cursor-pointer">
         <h2 className="text-xl font-semibold mb-2">{recipe.name}</h2>
         <div className="flex flex-wrap justify-between gap-2 md:gap-4">
-          <p>Total Time: {recipe.totalTime}</p>
+          <p>Total Time: {formatDuration((recipe.totalTime).toString())}</p>
           <p>
             {recipe.category.charAt(0).toUpperCase() +
               recipe.category.slice(1).toLowerCase()}

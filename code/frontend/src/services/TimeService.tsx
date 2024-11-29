@@ -15,18 +15,25 @@ export function parseISODuration(duration: string): string {
     return "0m";
   }
 
- export function formatTime(milliseconds: number): string {
-    // Verifica se o valor é um número válido
-    if (isNaN(milliseconds) || milliseconds === 0) {
-      return "0"; // Ou retorna outro valor de fallback, como "0m"
-    }
+  export function formatDuration(duration: string): string {
+    const regex = /PT(\d+H)?(\d+M)?/; // Captura as horas e minutos
+    const matches = duration.match(regex);
   
-    const totalMinutes = Math.floor(milliseconds / 60000); // Converte ms para minutos
-    const hours = Math.floor(totalMinutes / 60); // Calcula horas
-    const minutes = totalMinutes % 60; // Restante para minutos
+    if (!matches) return duration;
+  
+    const hours = matches[1] ? parseInt(matches[1], 10) : 0;
+    const minutes = matches[2] ? parseInt(matches[2], 10) : 0;
+  
+    let formattedTime = "";
   
     if (hours > 0) {
-      return `${hours}h ${minutes}m`;
+      formattedTime += `${hours} hour${hours > 1 ? "s" : ""}`;
     }
-    return `${minutes}m`;
+  
+    if (minutes > 0) {
+      if (formattedTime) formattedTime += " ";
+      formattedTime += `${minutes} minute${minutes > 1 ? "s" : ""}`;
+    }
+  
+    return formattedTime || "0 minutes";
   }

@@ -8,8 +8,8 @@ export type Recipe = {
     id: number;
     name: string;
     user: UserProfile;
-    ingredients: Ingredient;
-    methods: Method;
+    ingredients: Ingredient[];
+    methods: Method[];
     image: string;
     preparationTime: number;
     cookTime: number;

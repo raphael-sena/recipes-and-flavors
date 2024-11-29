@@ -91,7 +91,7 @@ const RecipeForm = () => {
     const formData = new FormData();
     formData.append("image", image); // O nome deve ser exatamente "image"
   
-    const token = localStorage.getItem("authToken");
+    const token = localStorage.getItem("authtoken");
     try {
       console.log("Uploading image for recipeId:", recipeId);
       console.log("FormData content:", formData.get("image")); // Adicione este log para verificar o conteúdo
@@ -132,18 +132,11 @@ const RecipeForm = () => {
       recipeData.cookTime
     }${recipeData.cookTimeUnit[0].toUpperCase()}`;
 
-    const userId = localStorage.getItem("authToken");
+    const userId = localStorage.getItem("authtoken");
 
     const recipePayload = {
       userId: userId,
       name: recipeData.name,
-      dietType: recipeData.dietType.toUpperCase(),
-      preparationTime,
-      cookTime,
-      servings: recipeData.servings,
-      cuisineType: recipeData.cuisineType.toUpperCase(),
-      difficulty: recipeData.difficulty.toUpperCase(),
-      category: recipeData.category.toUpperCase(),
       ingredients: ingredients.map((ingredient) => ({
         name: ingredient.name,
         quantity: ingredient.quantity,
@@ -152,14 +145,20 @@ const RecipeForm = () => {
       methods: methods.map((method) => ({
         description: method.description,
       })),
-
+      preparationTime,
+      cookTime,
+      servings: recipeData.servings,
+      dietType: recipeData.dietType.toUpperCase(),
+      cuisineType: recipeData.cuisineType.toUpperCase(),
+      difficulty: recipeData.difficulty.toUpperCase(),
+      category: recipeData.category.toUpperCase(),
     };
 
     try {
       let createdOrUpdatedItemId = null;
       console.log("Image state at submit:", image);
       
-      const token = localStorage.getItem("authToken");
+      const token = localStorage.getItem("authtoken");
       const response = await axios.post(
         "http://localhost:8080/recipe",
         recipePayload,

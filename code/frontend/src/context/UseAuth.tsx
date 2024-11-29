@@ -115,12 +115,21 @@ export const UserProvider = ({ children }: Props) => {
   };
 
   const logout = () => {
+    // Remover itens do localStorage
     localStorage.removeItem("authtoken");
     localStorage.removeItem("user");
+
+    const cookies = document.cookie.split(";"); 
+    cookies.forEach(cookie => {
+        const cookieName = cookie.split("=")[0].trim();
+        document.cookie = `${cookieName}=; expires=Sat, 15 Mar 1975 00:00:00 UTC; path=/;`;
+    });
+
     setUser(null);
     setToken(null);
+
     router.push("/");
-  };
+};
 
   return (
     <UserContext.Provider value={{ user, token, registerUser, loginUser, logout, isLoggedIn, getRole }}>

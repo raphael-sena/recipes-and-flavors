@@ -6,6 +6,7 @@ import { useAuth } from "@/context/UseAuth";
 import FooterComponent from "./components/FooterComponent";
 import Link from "next/link";
 import Pagination from "./components/PaginationComponent";
+import RecipeModal from "./components/RecipeModal";
 
 const MyRecipes = () => {
   const [recipes, setRecipes] = useState<Recipe[]>([]);
@@ -16,6 +17,9 @@ const MyRecipes = () => {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const itemsPerPage: number = 6;
   const [totalRecipes, setTotalRecipes] = useState<number>(0);
+
+  const [isModalOpen, setModalOpen] = useState(false);
+  const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null);
 
   const fetchRecipes = async (page: number) => {
     try {
@@ -60,6 +64,18 @@ const MyRecipes = () => {
     fetchRecipes(currentPage);
   }, [currentPage]);
 
+  useEffect(() => {
+    if (isModalOpen) {
+      document.body.style.overflow = "hidden"; // Bloqueia a rolagem
+    } else {
+      document.body.style.overflow = ""; // Restaura a rolagem
+    }
+
+    return () => {
+      document.body.style.overflow = ""; // Certifica-se de que a rolagem será restaurada quando o componente for desmontado
+    };
+  }, [isModalOpen]);
+
   const handleNextPage = () => {
     const nextPage = currentPage + 1;
     const totalPages = Math.ceil(totalRecipes / itemsPerPage);
@@ -75,6 +91,16 @@ const MyRecipes = () => {
     }
   };
 
+  const handleOpenModal = (recipe: Recipe) => {
+    setSelectedRecipe(recipe);
+    setModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setSelectedRecipe(null);
+    setModalOpen(false);
+  };
+
   if (loading) {
     return <div className="text-center">Carregando receitas...</div>;
   }
@@ -86,49 +112,78 @@ const MyRecipes = () => {
   const totalPages: number = Math.ceil(totalRecipes / itemsPerPage);
 
   return (
-    <div className="p-1 bg-light grid grid-cols-1 gap-2 min-h-screen">
-      <div className="z-20">
+    <div className="relative min-h-screen bg-light">
+      <div className="z-30">
         <MenuComponent />
       </div>
       <div className="md:ml-64 jsutify-center top-20">
         <div className="relative z-10 justify-center">
-          <div className="flex justify-between relative ">
-            <h1 className="md:text-4xl md:p-5 md:text-start w-full text-center text-3xl text-darkBlue mb-2">
-              Your Recipes
-            </h1>
-            <div className="flex justify-end w-full mb-2 gap-2 mr-4 md:mr-10">
-              <button
-                onClick={handlePreviousPage}
-                className="p-2 bg-lightBlue text-white rounded-lg"
-                disabled={currentPage === 1}
-              >
-                Previous
-              </button>
-              <button
-                onClick={handleNextPage}
-                className="p-2 bg-lightBlue text-white rounded-lg"
-                disabled={currentPage === totalPages}
-              >
-                Next
-              </button>
+          <div className="flex justify-between ">
+            <div className="flex justify-between relative ">
+              <h1 className="md:text-4xl md:p-5 px-4 md:text-start w-full text-center text-3xl text-darkBlue mb-2">
+                Your Recipes
+              </h1>
             </div>
+            <div className="flex justify-between items-center">
+              <div className="flex justify-end w-full mb-2 gap-2 mr-4 md:mr-10">
+                  <button
+                    onClick={handlePreviousPage}
+                    className="p-2 bg-lightBlue text-white rounded-lg"
+                    disabled={currentPage === 1}
+                  >
+                    Previous
+                  </button>
+                  <button
+                    onClick={handleNextPage}
+                    className="p-2 bg-lightBlue text-white rounded-lg"
+                    disabled={currentPage === totalPages}
+                  >
+                    Next
+                  </button>
+                </div>
+          </div>
           </div>
           <hr className="h-px mb-2 bg-darkBlue border-0" />
 
-          <div className="flex flex-wrap gap-1 justify-start md:ml-8 lg:ml-16" >
-            {recipes.map((recipe) => (
-              <Link
-                href={{
-                  pathname: "/recipes/" + recipe.id,
-                }}
-              >
-                <RecipeCard key={recipe.id} recipe={recipe} />
-              </Link>
-            ))}
+          <div className="z-20">
+            <div className="flex flex-wrap gap-1 justify-center md:justify-start md:ml-8 lg:ml-16">
+              {recipes.map((recipe) => (
+                <div key={recipe.id} onClick={() => handleOpenModal(recipe)}>
+                  <RecipeCard recipe={recipe} />
+                </div>
+              ))}
+            </div>
+            <RecipeModal
+              recipe={selectedRecipe}
+              isOpen={isModalOpen}
+              onClose={handleCloseModal}
+            />
           </div>
 
-          <span className="pagination flex justify-center mt-4">
-            Page {currentPage} of {totalPages}
+          <div className="flex justify-between items-center md:hidden">
+            <span className="pagination flex w-full justify-center">
+              Page {currentPage} of {totalPages}
+            </span>
+            <div className="flex justify-end w-full mb-2 gap-2 mr-4 md:mr-10">
+                <button
+                  onClick={handlePreviousPage}
+                  className="p-2 bg-lightBlue text-white rounded-lg"
+                  disabled={currentPage === 1}
+                >
+                  Previous
+                </button>
+                <button
+                  onClick={handleNextPage}
+                  className="p-2 bg-lightBlue text-white rounded-lg"
+                  disabled={currentPage === totalPages}
+                >
+                  Next
+                </button>
+              </div>
+          </div>
+
+          <span className="pagination flex w-full justify-center hidden md:flex">
+              Page {currentPage} of {totalPages}
           </span>
         </div>
       </div>
