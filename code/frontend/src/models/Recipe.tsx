@@ -19,6 +19,6 @@ export type Recipe = {
     cuisineType: CuisineType;
     difficulty: Difficulty;
     category: Category;
-    reviews: Review;
+    reviews: Review[];
     deleted: boolean;
 }

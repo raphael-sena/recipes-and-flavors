@@ -5,6 +5,7 @@ import com.recipes.flavors.backend.entities.Method;
 import com.recipes.flavors.backend.entities.Recipe;
 import com.recipes.flavors.backend.entities.User;
 import com.recipes.flavors.backend.entities.dto.recipe.RecipeCreateDTO;
+import com.recipes.flavors.backend.entities.dto.recipe.RecipeDTO;
 import com.recipes.flavors.backend.entities.dto.recipe.RecipeUpdateDTO;
 import com.recipes.flavors.backend.repositories.IngredientRepository;
 import com.recipes.flavors.backend.repositories.MethodRepository;
@@ -12,6 +13,7 @@ import com.recipes.flavors.backend.repositories.RecipeRepository;
 import com.recipes.flavors.backend.repositories.UserRepository;
 import com.recipes.flavors.backend.services.exceptions.ObjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -49,6 +51,10 @@ public class RecipeService {
                 "Receita não encontrada! Id: " + id + ", Tipo: " + Recipe.class.getName()));
     }
 
+    public List<Recipe> findRecipesByUserId(Long userId) {
+        return recipeRepository.findByUserId(userId); // Método que deve estar implementado no seu repositório
+    }
+
     @Transactional
     public Recipe create(Recipe obj) {
         obj.setTotalTime(totalTime(obj.getPreparationTime(), obj.getCookTime()));
@@ -56,8 +62,13 @@ public class RecipeService {
     }
 
     @Transactional
-    public Recipe update(Recipe obj) {
+    public Recipe update(Recipe obj, Long userId) {
         Recipe newObj = findById(obj.getId());
+
+        if (!newObj.getUser().getId().equals(userId)) {
+            throw new AccessDeniedException("You do not have permission to edit this recipe.");
+        }
+
         newObj.setTotalTime(totalTime(obj.getPreparationTime(), obj.getCookTime()));
         return this.recipeRepository.save(newObj);
     }
@@ -123,7 +134,7 @@ public class RecipeService {
     }
 
     @Transactional
-    public Recipe fromDTO(@Valid RecipeUpdateDTO obj) {
+    public Recipe fromDTO(@Valid RecipeDTO obj) {
 
         Optional<Recipe> existingRecipe = recipeRepository.findById(obj.getId());
 
@@ -132,16 +143,13 @@ public class RecipeService {
         recipe.setName(obj.getName());
 
         // Update de Ingredients
-        // Remover métodos antigos que não foram enviados na requisição
         Set<Long> updatedIngredientsIds = obj.getIngredients().stream()
                 .map(Ingredient::getId)
                 .collect(Collectors.toSet());
 
-        // Remover os métodos que não estão mais presentes
         recipe.getIngredients()
                 .removeIf(ingredient -> !updatedIngredientsIds.contains(ingredient.getId()));
 
-        // Atualiza ou adiciona novos métodos, mas evita substituição da lista inteira
         for (Ingredient ingredientDTO : obj.getIngredients()) {
             Ingredient ingredient = ingredientDTO.getId() != null
                     ? ingredientRepository.findById(ingredientDTO.getId()).orElseGet(Ingredient::new)
@@ -157,23 +165,20 @@ public class RecipeService {
         recipe = recipeRepository.save(recipe);
 
         // Update de Métodos
-        // Remover métodos antigos que não foram enviados na requisição
         Set<Long> updatedMethodIds = obj.getMethods().stream()
                 .map(Method::getId)
                 .collect(Collectors.toSet());
 
-        // Remover os métodos que não estão mais presentes
         recipe.getMethods().removeIf(method -> !updatedMethodIds.contains(method.getId()));
 
-        // Atualiza ou adiciona novos métodos, mas evita substituição da lista inteira
         for (Method methodDTO : obj.getMethods()) {
             Method method = methodDTO.getId() != null
                     ? methodRepository.findById(methodDTO.getId()).orElseGet(Method::new)
                     : new Method();
 
             method.setDescription(methodDTO.getDescription());
-            method.setRecipe(recipe);  // Associa o método à receita existente
-            methodRepository.save(method); // Salva o método atualizado ou novo
+            method.setRecipe(recipe);
+            methodRepository.save(method);
         }
 
         if (obj.getImage() != null) {
