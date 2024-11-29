@@ -2,8 +2,9 @@ package com.recipes.flavors.backend.controllers;
 
 import com.recipes.flavors.backend.entities.dto.login.LoginRequest;
 import com.recipes.flavors.backend.entities.dto.login.LoginResponse;
-import com.recipes.flavors.backend.repositories.UserRepository;
 import com.recipes.flavors.backend.entities.Role;
+import com.recipes.flavors.backend.services.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -20,31 +21,32 @@ import java.util.stream.Collectors;
 @RestController
 public class TokenController {
 
-    private final JwtEncoder jwtEncoder;
-    private final UserRepository userRepository;
-    private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    @Autowired
+    private JwtEncoder jwtEncoder;
 
-    public TokenController(JwtEncoder jwtEncoder,
-                           UserRepository userRepository,
-                           BCryptPasswordEncoder bCryptPasswordEncoder){
-        this.jwtEncoder = jwtEncoder;
-        this.userRepository = userRepository;
-        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
-    }
+    @Autowired
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
+
+    @Autowired
+    private UserService userService;
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest loginRequest){
-        var userOptional = userRepository.findByEmail(loginRequest.email());
+        var userOptional = userService.findByEmail(loginRequest.email());
 
         if (userOptional.isEmpty()) {
+            System.out.println("Usuário não encontrado para o email: " + loginRequest.email());
             throw new BadCredentialsException("Usuário ou senha inválidos");
         }
 
         var user = userOptional.get();
 
+        System.out.println("Usuário: " + user);
+
         if (!bCryptPasswordEncoder.matches(loginRequest.password(), user.getPassword())) {
             throw new BadCredentialsException("Usuário ou senha inválidos");
         }
+
 
         var now = Instant.now();
         var expiresIn = 3600L; // Token válido por 1 hora
@@ -63,6 +65,8 @@ public class TokenController {
                 .build();
 
         var token = jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
+
+        System.out.println("Generated JWT: " + token);
 
         return ResponseEntity.ok(new LoginResponse(user.getEmail(), token, expiresIn));
     }

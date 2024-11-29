@@ -52,7 +52,7 @@ public class User {
     @Size(min = 8, max = 60)
     private String password;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @JsonIgnoreProperties({"user"})
     private Set<Review> reviews = new HashSet<>();

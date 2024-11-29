@@ -68,7 +68,6 @@ public class SecurityConfig {
         return jwtAuthenticationConverter;
     }
 
-
     // Método para configurar CORS
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {

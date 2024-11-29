@@ -4,15 +4,15 @@ import { BiSolidCategoryAlt, BiSolidFoodMenu } from "react-icons/bi";
 import { MdAssignmentAdd } from "react-icons/md";
 import { FaCoffee, FaStar } from "react-icons/fa";
 import { GiHotMeal, GiMeal, GiStairsCake } from "react-icons/gi";
+import { useAuth } from "@/context/UseAuth";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [user, setUser] = useState({ email: "", name: "", image: "" });
+  const { logout } = useAuth();
 
   const handleLogout = () => {
-    localStorage.removeItem("authToken");
-    setUser({ email: "", name: "", image: "" });
-    window.location.href = "/login";
+    logout();
   };
 
   const handleNavigationToProfile = () => {
