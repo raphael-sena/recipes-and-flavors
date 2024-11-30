@@ -1,11 +1,8 @@
 import React from 'react';
+import { Method } from "@/models/Method"
 import { IoIosAddCircle, IoIosRemoveCircle } from 'react-icons/io';
 
-type Method = {
-  description: string;
-};
-
-type MethodComponentProps = {
+export type MethodComponentProps = {
   methods: Method[];
   onAddMethod: () => void;
   onRemoveMethod: (index: number) => void;

@@ -1,4 +1,4 @@
-import CreateRecipeComponent from "./components/CreateRecipeComponent";
+import CreateRecipeComponent from "./components/recipe/CreateRecipeComponent";
 import Footer from "./components/FooterComponent";
 import Navbar from "./components/MenuComponent";
 import SearchBarComponent from "./components/SearchBarComponent";
