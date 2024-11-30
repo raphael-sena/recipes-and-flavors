@@ -1,7 +1,7 @@
 import { useState } from "react";
 import Flag from "react-world-flags";
 
-const cuisines = [
+export const cuisines = [
   { name: "Italian", code: "IT" },
   { name: "Brazilian", code: "BR" },
   { name: "Chinese", code: "CN" },
@@ -11,7 +11,7 @@ const cuisines = [
   { name: "Thai", code: "TH" },
   { name: "Mexican", code: "MX" },
   { name: "French", code: "FR" },
-  { name: "USA", code: "USA" },
+  { name: "USA", code: "US" },
 ];
 
 type CuisinesComponentProps = {

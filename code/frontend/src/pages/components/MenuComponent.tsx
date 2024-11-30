@@ -4,15 +4,15 @@ import { BiSolidCategoryAlt, BiSolidFoodMenu } from "react-icons/bi";
 import { MdAssignmentAdd } from "react-icons/md";
 import { FaCoffee, FaStar } from "react-icons/fa";
 import { GiHotMeal, GiMeal, GiStairsCake } from "react-icons/gi";
+import { useAuth } from "@/context/UseAuth";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [user, setUser] = useState({ email: "", name: "", image: "" });
+  const { logout } = useAuth();
 
   const handleLogout = () => {
-    localStorage.removeItem("authToken");
-    setUser({ email: "", name: "", image: "" });
-    window.location.href = "/login";
+    logout();
   };
 
   const handleNavigationToProfile = () => {
@@ -22,7 +22,7 @@ const Navbar = () => {
   const toggleMenu = () => setIsOpen(!isOpen);
 
   useEffect(() => {
-    const token = localStorage.getItem("authToken");
+    const token = localStorage.getItem("authtoken");
 
     if (token) {
       fetch("http://localhost:8080/user", {
@@ -76,7 +76,7 @@ const Navbar = () => {
               <GiHotMeal />
               <p className="px-2">Recipes</p>
             </div>
-            <ul className="absolute left-full top-0 bg-darkBlue text-light shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 ease-in-out ml-1 w-full">
+            <ul className="absolute left-60 z-20 top-0 bg-darkBlue text-light shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 ease-in-out ml-1 w-full">
               <li className="hover:bg-blue hover:text-darkBlue">
                 <a
                   href="/my-recipes"
@@ -103,7 +103,7 @@ const Navbar = () => {
               <BiSolidCategoryAlt />
               <p className="px-2">Category</p>
             </div>
-            <ul className="absolute left-full top-0 bg-darkBlue text-light shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 ease-in-out ml-1 w-full">
+            <ul className="absolute left-60 z-20 top-0 bg-darkBlue text-light shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 ease-in-out ml-1 w-full">
               <li className="hover:bg-blue hover:text-darkBlue">
                 <a
                   href="/recipes=?breakfast"

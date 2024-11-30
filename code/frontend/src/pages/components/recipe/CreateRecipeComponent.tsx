@@ -1,28 +1,20 @@
 import { useState } from "react";
 import axios from "axios";
-import CuisinesComponent from "./EnumComponents/CuisinesComponent";
-import { DifficultyComponent } from "./EnumComponents/DifficultyComponent";
+import CuisinesComponent from "../EnumComponents/CuisinesComponent";
+import { DifficultyComponent } from "../EnumComponents/DifficultyComponent";
 import { Category, DietType, Difficulty, UnitType } from "@/enums";
-import { CategoryComponent } from "./EnumComponents/CategoryComponent";
-import { DietTypeComponent } from "./EnumComponents/DietTypeComponent";
+import { CategoryComponent } from "../EnumComponents/CategoryComponent";
+import { DietTypeComponent } from "../EnumComponents/DietTypeComponent";
 import IngredientComponent from "./IngredientComponent";
-import MethodComponent from "./MethodComponent";
+import MethodComponent from "../MethodComponent";
 import { IoIosTime } from "react-icons/io";
-
-export type Ingredient = {
-  name: string;
-  quantity: number;
-  unit: UnitType;
-};
-
-type Method = {
-  description: string;
-};
+import { Ingredient } from "@/models/Ingredient";
+import { Method } from "@/models/Method";
 
 const RecipeForm = () => {
   const [ingredients, setIngredients] = useState<Ingredient[]>([]);
   const [methods, setMethods] = useState<Method[]>([]);
-  const [image, setImage] = useState<string | null>(null);
+  const [image, setImage] = useState<File | null>(null);
   const [recipeData, setRecipeData] = useState({
     userId: "",
     name: "",
@@ -70,12 +62,6 @@ const RecipeForm = () => {
     setIngredients(updatedIngredients);
   };
 
-  const handleUnitChange = (index: number, value: UnitType) => {
-    const updatedIngredients = [...ingredients];
-    updatedIngredients[index].unit = value;
-    setIngredients(updatedIngredients);
-  };
-
   const handleAddMethod = () => {
     setMethods([...methods, { description: "" }]);
   };
@@ -90,14 +76,36 @@ const RecipeForm = () => {
     setMethods(updatedMethods);
   };
 
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    console.log("Selected image:", e.target.files?.[0]);
     if (e.target.files && e.target.files[0]) {
-      const file = e.target.files[0];
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImage(reader.result as string); // The result is a base64 string
-      };
-      reader.readAsDataURL(file); // This will trigger the onloadend event
+      setImage(e.target.files[0]);
+    }
+  };
+
+  const handleUploadImage = async (recipeId: number) => {
+    if (!image) {
+      console.error("Nenhuma imagem selecionada.");
+      return;
+    }
+    const formData = new FormData();
+    formData.append("image", image); // O nome deve ser exatamente "image"
+  
+    const token = localStorage.getItem("authtoken");
+    try {
+      console.log("Uploading image for recipeId:", recipeId);
+      console.log("FormData content:", formData.get("image")); // Adicione este log para verificar o conteúdo
+  
+      await axios.post(`http://localhost:8080/recipe/${recipeId}/image`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          "Authorization": `Bearer ${token}`,
+        },
+      });
+  
+      alert("Imagem carregada com sucesso!");
+    } catch (error) {
+      console.error("Erro ao carregar imagem:", error);
     }
   };
 
@@ -124,19 +132,11 @@ const RecipeForm = () => {
       recipeData.cookTime
     }${recipeData.cookTimeUnit[0].toUpperCase()}`;
 
-    const userId = localStorage.getItem("authToken");
+    const userId = localStorage.getItem("authtoken");
 
     const recipePayload = {
       userId: userId,
       name: recipeData.name,
-      image: image,
-      dietType: recipeData.dietType.toUpperCase(),
-      preparationTime,
-      cookTime,
-      servings: recipeData.servings,
-      cuisineType: recipeData.cuisineType.toUpperCase(),
-      difficulty: recipeData.difficulty.toUpperCase(),
-      category: recipeData.category.toUpperCase(),
       ingredients: ingredients.map((ingredient) => ({
         name: ingredient.name,
         quantity: ingredient.quantity,
@@ -145,10 +145,20 @@ const RecipeForm = () => {
       methods: methods.map((method) => ({
         description: method.description,
       })),
+      preparationTime,
+      cookTime,
+      servings: recipeData.servings,
+      dietType: recipeData.dietType.toUpperCase(),
+      cuisineType: recipeData.cuisineType.toUpperCase(),
+      difficulty: recipeData.difficulty.toUpperCase(),
+      category: recipeData.category.toUpperCase(),
     };
 
     try {
-      const token = localStorage.getItem("authToken");
+      let createdOrUpdatedItemId = null;
+      console.log("Image state at submit:", image);
+      
+      const token = localStorage.getItem("authtoken");
       const response = await axios.post(
         "http://localhost:8080/recipe",
         recipePayload,
@@ -159,8 +169,20 @@ const RecipeForm = () => {
           },
         }
       );
+
+      console.log("Response data:", response.data);
+
+      createdOrUpdatedItemId = response.data?.id || response.data.recipe?.id;
+      console.log("Response data:", response.data);
+      console.log("Recipe ID:", createdOrUpdatedItemId);
+
+      if (image && createdOrUpdatedItemId !== null) {
+        await handleUploadImage(createdOrUpdatedItemId);
+      }
+
       alert("Recipe created successfully!");
       console.log(response.data);
+     
       setRecipeData({
         userId: "",
         name: "",
@@ -205,12 +227,11 @@ const RecipeForm = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="font-mulish items-center justify-items-center">
+    <form onSubmit={handleSubmit} className="font-mulish lg:items-center lg:justify-items-center">
       <h1 className="font-bold text-3xl xl:my-4 xl:text-center">
         Create Recipe
-        <hr className="h-px mb-2 bg-darkBlue border-0 xl:hidden" />
+        <hr className="h-px mb-2 bg-darkBlue border-0 xl:hidden"/>
       </h1>
-
       <div className="xl:flex xl:flex-col-2 xl:gap-4 xl:items-center xl:justify-items-center mb-2">
         {/* Informações da Receita */}
         <div>
@@ -237,23 +258,37 @@ const RecipeForm = () => {
 
             <div className="lg:grid lg:grid-row-2">
               {/* Upload de Imagem */}
-              <div className="mb-2">
-                <label
-                  htmlFor="image"
-                  className="block text-lightBlue font-medium"
-                >
-                  Upload recipe image...
-                </label>
-                <input
-                  type="file"
-                  name="image"
-                  value={recipeData.image}
-                  onChange={handleImageUpload}
-                  accept="image/*"
-                  className="input-class text-darkBlue w-full"
-                />
-              </div>
+              <div className="flex justify-between">
+                <div className="mb-2 w-2/3">
+                  <label
+                    htmlFor="image"
+                    className="block text-lightBlue font-medium"
+                  >
+                    Upload recipe image...
+                  </label>
+                  <input
+                    type="file"
+                    name="image"
+                    onChange={handleImageChange}
+                    accept="image/*"
+                    className="input-class text-darkBlue w-full"
+                  />
+                </div>
 
+                {recipeData.image && (
+                <div className="mb-2 w-1/3">
+                  <h4 className="text-darkBlue">Recipe Image</h4>
+                  <img
+                    src={recipeData.image}
+                    alt="Recipe"
+                    className="w-full rounded-md mt-2"
+                  />
+                </div>
+                )}
+              </div>
+            </div>
+
+            <div className="flex flex-wrap gap-2 justify-start lg:grid lg:grid-rows-2 lg:grid-flow-col lg:gap-2">
               {/* Tipo de Cozinha */}
               <div className="flex space-x-2 mb-2">
                 <div className="w-full">
@@ -274,14 +309,20 @@ const RecipeForm = () => {
                   />
                 </div>
               </div>
-            </div>
 
-            <div className="lg:grid lg:grid-rows-2 lg:grid-flow-col lg:gap-2">
+              {/* Dieta */}
+              <DietTypeComponent
+                selectedDietType={recipeData.dietType as DietType}
+                onChange={(e) =>
+                  setRecipeData({ ...recipeData, dietType: e.target.value })
+                }
+              />
+
               {/* Número de Porções */}
-              <div className="lg:w-full lg:pr-2">
+              <div className="lg:w-full lg:pr-2 mb-2">
                 <label
                   htmlFor="servings"
-                  className="block text-lightBlue font-medium mb-2"
+                  className="block text-lightBlue font-medium"
                 >
                   Total Servings
                 </label>
@@ -307,14 +348,6 @@ const RecipeForm = () => {
                 selectedCategory={recipeData.category as Category}
                 onChange={(e) =>
                   setRecipeData({ ...recipeData, category: e.target.value })
-                }
-              />
-
-              {/* Dieta */}
-              <DietTypeComponent
-                selectedDietType={recipeData.dietType as DietType}
-                onChange={(e) =>
-                  setRecipeData({ ...recipeData, dietType: e.target.value })
                 }
               />
             </div>

@@ -1,3 +1,5 @@
+"use client";
+
 import Footer from "./components/FooterComponent";
 import GoBackButtonComponent from "./components/GoBackButtonComponent";
 import LoginComponent from "./components/LoginComponent";
@@ -16,7 +18,6 @@ export default function Login() {
           height={300}
           className="rounded-full py-8"
         />
-        
       </div>
 
         <LoginComponent />

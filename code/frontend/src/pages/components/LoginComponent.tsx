@@ -1,64 +1,45 @@
 import React, { useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import SignUpButtonComponent from "./SignUpButtonComponent";
+import { useAuth } from "@/context/UseAuth";
+import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+import * as Yup from "yup";
+import { yupResolver } from "@hookform/resolvers/yup";
 
-interface LoginFormData {
+type Props = {};
+
+type LoginFormData = {
   email: string;
   password: string;
-}
+};
 
-const LoginComponent: React.FC = () => {
-  const [formData, setFormData] = useState<LoginFormData>({
-    email: "",
-    password: "",
-  });
+const validation = Yup.object().shape({
+  email: Yup.string().email().required("Email é obrigatório"),
+  password: Yup.string().required("Senha é obrigatória"),
+});
+
+const LoginComponent = (props: Props) => {
   const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState<string>("");
   const [loading, setLoading] = useState(false);
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
+  const { loginUser } = useAuth();
+  const router = useRouter(); 
+  const { register, handleSubmit, formState: { errors } } = useForm<LoginFormData>({
+    resolver: yupResolver(validation),
+  });  
 
   const handleSignUp = () => {
     window.location.href = "/register";
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (formData.email && formData.password) {
-      setError("");
-      setLoading(true);
-
-      try {
-        const response = await fetch("http://localhost:8080/login", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(formData),
-        });
-
-        const data = await response.json();
-
-        if (response.ok) {
-          console.log("Login successful:", data);
-          localStorage.setItem("authToken", data.accessToken);
-           window.location.href = "/home";
-        } else {
-          setError(data.messsage || "invalid credentials");
-        }
-      } catch (error) {
-        setError("An error occurred, please try again.");
-      } finally {
-        setLoading(false);
-      }
-    } else {
-      setError("Please enter all fields.");
+  const handleLogin = async (form: LoginFormData) => {
+    setLoading(true);
+    try {
+      await loginUser(form.email, form.password);
+    } catch (error) {
+      console.error("Erro ao fazer login", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -71,8 +52,7 @@ const LoginComponent: React.FC = () => {
           <h3 className="text-2xl">Login to your account</h3>
         </div>
 
-        {error && <p className="text-darkRed text-sm lg:mb-4 my-2">{error}</p>}
-        <form onSubmit={handleSubmit} className="space-y-4 mt-4">
+        <form onSubmit={handleSubmit(handleLogin)} className="space-y-4 mt-4">
           <div>
             <label
               htmlFor="email"
@@ -82,13 +62,12 @@ const LoginComponent: React.FC = () => {
             </label>
             <input
               type="email"
-              id="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
               className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-darkBlue"
               placeholder="Enter your e-mail"
+              required
+              {...register("email")}
             />
+            {errors.email && <p className="text-red-500">{errors.email.message}</p>}
           </div>
 
           <div className="relative">
@@ -101,13 +80,12 @@ const LoginComponent: React.FC = () => {
             <div className="relative flex items-center">
               <input
                 type={showPassword ? "text" : "password"}
-                id="password"
-                name="password"
-                value={formData.password}
-                onChange={handleChange}
                 className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-darkBlue pr-10"
                 placeholder="Enter your password"
+                required
+                {...register("password")}
               />
+              {errors.password && <p className="text-red-500">{errors.password.message}</p>}
               <div
                 className="absolute right-3 flex items-center cursor-pointer"
                 onClick={() => setShowPassword((prev) => !prev)}
@@ -130,9 +108,9 @@ const LoginComponent: React.FC = () => {
           </button>
         </form>
 
-        <p className="py-1 text-right text-darkBlue hover:text-lightBlue">
-          <a href="">Forgot your password?</a>
-        </p>
+        <a href="passwordReset" className="py-1 text-right text-darkBlue hover:text-lightBlue">
+          <p>Forgot your password?</p>
+        </a>
 
         <SignUpButtonComponent 
           onClick={handleSignUp} 

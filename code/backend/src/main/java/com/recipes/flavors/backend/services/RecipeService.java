@@ -5,19 +5,25 @@ import com.recipes.flavors.backend.entities.Method;
 import com.recipes.flavors.backend.entities.Recipe;
 import com.recipes.flavors.backend.entities.User;
 import com.recipes.flavors.backend.entities.dto.recipe.RecipeCreateDTO;
-import com.recipes.flavors.backend.entities.dto.recipe.RecipeUpdateDTO;
+import com.recipes.flavors.backend.entities.dto.recipe.RecipeDTO;
 import com.recipes.flavors.backend.repositories.IngredientRepository;
 import com.recipes.flavors.backend.repositories.MethodRepository;
 import com.recipes.flavors.backend.repositories.RecipeRepository;
 import com.recipes.flavors.backend.repositories.UserRepository;
 import com.recipes.flavors.backend.services.exceptions.ObjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import java.io.IOException;
 import java.time.Duration;
+import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -48,14 +54,28 @@ public class RecipeService {
     }
 
     @Transactional
+    public List<Recipe> findRecipesByUserId(Long userId, int offset, int limit) {
+        Pageable pageable = PageRequest.of(offset / limit, limit);
+        return recipeRepository.findByUserId(userId, pageable).getContent();
+    }
+
+    @Transactional
     public Recipe create(Recipe obj) {
         obj.setTotalTime(totalTime(obj.getPreparationTime(), obj.getCookTime()));
         return recipeRepository.save(obj);
     }
 
     @Transactional
-    public Recipe update(Recipe obj) {
+    public Recipe update(Recipe obj, Long userId) {
+
+        String authenticatedUserId = SecurityContextHolder.getContext().getAuthentication().getName();
+
         Recipe newObj = findById(obj.getId());
+
+        if (!newObj.getUser().getId().toString().equals(authenticatedUserId)) {
+            throw new AccessDeniedException("You do not have permission to edit this recipe.");
+        }
+
         newObj.setTotalTime(totalTime(obj.getPreparationTime(), obj.getCookTime()));
         return this.recipeRepository.save(newObj);
     }
@@ -79,7 +99,9 @@ public class RecipeService {
         recipe.setUser(user);
 
         recipe.setName(obj.getName());
-        recipe.setImage(obj.getImage());
+        if (obj.getImage() != null) {
+            recipe.setImage(Base64.getDecoder().decode(obj.getImage()));
+        }
         recipe.setPreparationTime(obj.getPreparationTime());
         recipe.setCookTime(obj.getCookTime());
         recipe.setServings(obj.getServings());
@@ -119,7 +141,7 @@ public class RecipeService {
     }
 
     @Transactional
-    public Recipe fromDTO(@Valid RecipeUpdateDTO obj) {
+    public Recipe fromDTO(@Valid RecipeDTO obj) {
 
         Optional<Recipe> existingRecipe = recipeRepository.findById(obj.getId());
 
@@ -128,16 +150,13 @@ public class RecipeService {
         recipe.setName(obj.getName());
 
         // Update de Ingredients
-        // Remover métodos antigos que não foram enviados na requisição
         Set<Long> updatedIngredientsIds = obj.getIngredients().stream()
                 .map(Ingredient::getId)
                 .collect(Collectors.toSet());
 
-        // Remover os métodos que não estão mais presentes
         recipe.getIngredients()
                 .removeIf(ingredient -> !updatedIngredientsIds.contains(ingredient.getId()));
 
-        // Atualiza ou adiciona novos métodos, mas evita substituição da lista inteira
         for (Ingredient ingredientDTO : obj.getIngredients()) {
             Ingredient ingredient = ingredientDTO.getId() != null
                     ? ingredientRepository.findById(ingredientDTO.getId()).orElseGet(Ingredient::new)
@@ -153,26 +172,25 @@ public class RecipeService {
         recipe = recipeRepository.save(recipe);
 
         // Update de Métodos
-        // Remover métodos antigos que não foram enviados na requisição
         Set<Long> updatedMethodIds = obj.getMethods().stream()
                 .map(Method::getId)
                 .collect(Collectors.toSet());
 
-        // Remover os métodos que não estão mais presentes
         recipe.getMethods().removeIf(method -> !updatedMethodIds.contains(method.getId()));
 
-        // Atualiza ou adiciona novos métodos, mas evita substituição da lista inteira
         for (Method methodDTO : obj.getMethods()) {
             Method method = methodDTO.getId() != null
                     ? methodRepository.findById(methodDTO.getId()).orElseGet(Method::new)
                     : new Method();
 
             method.setDescription(methodDTO.getDescription());
-            method.setRecipe(recipe);  // Associa o método à receita existente
-            methodRepository.save(method); // Salva o método atualizado ou novo
+            method.setRecipe(recipe);
+            methodRepository.save(method);
         }
 
-        recipe.setImage(obj.getImage());
+        if (obj.getImage() != null) {
+            recipe.setImage(Base64.getDecoder().decode(obj.getImage()));
+        }
         recipe.setPreparationTime(obj.getPreparationTime());
         recipe.setCookTime(obj.getCookTime());
         recipe.setServings(obj.getServings());
@@ -186,5 +204,22 @@ public class RecipeService {
 
     public Duration  totalTime(Duration  cookTime, Duration preparationTime) {
         return cookTime.plus(preparationTime);
+    }
+
+    @Transactional
+    public void saveImage(Long id, MultipartFile file) throws IOException {
+        Recipe recipe = findById(id);
+        recipe.setImage(file.getBytes());
+        recipeRepository.save(recipe);
+    }
+
+    @Transactional
+    public byte[] retrieveImage(Long id) {
+        Recipe recipe = findById(id);
+        return recipe.getImage();
+    }
+
+    public Long countRecipesByUserId(Long userId) {
+        return recipeRepository.countByUserId(userId);
     }
 }

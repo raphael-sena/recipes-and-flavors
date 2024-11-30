@@ -68,9 +68,8 @@ public class Recipe {
     @JsonIgnoreProperties({"recipe"})
     private List<Method> methods;
 
-    @Lob
-    @Column(unique = true)
-    private String image;
+    @Column(name = "image", columnDefinition = "BYTEA")
+    private byte[] image;
 
     @Column(name = "preparationTime")
     private Duration preparationTime;

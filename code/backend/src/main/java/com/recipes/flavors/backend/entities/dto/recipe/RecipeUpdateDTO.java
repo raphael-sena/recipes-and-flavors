@@ -17,16 +17,16 @@ import java.util.List;
 @NoArgsConstructor
 @Data
 public class RecipeUpdateDTO {
-    private Long id;
-    private String name;
+    private Long             id;
+    private String           name;
     private List<Ingredient> ingredients;
-    private List<Method> methods;
-    private String image;
-    private Duration preparationTime;
-    private Duration cookTime;
-    private Integer servings;
-    private DietType dietType;
-    private CuisineType cuisineType;
-    private Difficulty difficulty;
-    private Category category;
+    private List<Method>     methods;
+    private String           image;
+    private Duration         preparationTime;
+    private Duration         cookTime;
+    private Integer          servings;
+    private DietType         dietType;
+    private CuisineType      cuisineType;
+    private Difficulty       difficulty;
+    private Category         category;
 }

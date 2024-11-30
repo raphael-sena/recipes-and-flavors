@@ -1,5 +1,5 @@
-import { Ingredient } from "./CreateRecipeComponent";
-import EnumSelectComponent from "./EnumComponents/EnumSelectComponent";
+import { Ingredient } from "@/models/Ingredient";
+import EnumSelectComponent from "../EnumComponents/EnumSelectComponent";
 import { UnitType } from "@/enums";
 import { IoIosAddCircle, IoIosRemoveCircle } from "react-icons/io";
 
