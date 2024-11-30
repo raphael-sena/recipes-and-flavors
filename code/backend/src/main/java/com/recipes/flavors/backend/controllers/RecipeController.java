@@ -86,10 +86,15 @@ public class RecipeController {
                 .body(newRecipe);
     }
 
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("#obj.user == authentication.principal.id")
     @PutMapping("/{id}")
     public ResponseEntity<Void> update(@Valid @RequestBody RecipeDTO obj,
-                                       @PathVariable Long id) {
+                                       @PathVariable Long id,
+                                       Authentication authentication) {
+
+        System.out.println("Usuário autenticado: " + authentication.getName());
+        System.out.println("Permissões: " + authentication.getAuthorities());
+
         obj.setId(id);
 
         Recipe recipe = this.recipeService.fromDTO(obj);

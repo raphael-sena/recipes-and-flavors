@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -66,9 +67,12 @@ public class RecipeService {
 
     @Transactional
     public Recipe update(Recipe obj, Long userId) {
+
+        String authenticatedUserId = SecurityContextHolder.getContext().getAuthentication().getName();
+
         Recipe newObj = findById(obj.getId());
 
-        if (!newObj.getUser().getId().equals(userId)) {
+        if (!newObj.getUser().getId().toString().equals(authenticatedUserId)) {
             throw new AccessDeniedException("You do not have permission to edit this recipe.");
         }
 

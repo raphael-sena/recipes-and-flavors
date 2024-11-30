@@ -44,6 +44,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/login").permitAll()
                         .requestMatchers(HttpMethod.POST, "/user").permitAll()
                         .requestMatchers(HttpMethod.POST, "/recipe").permitAll()
+                        .requestMatchers(HttpMethod.PUT, "/recipe/**").authenticated()
                         .requestMatchers(HttpMethod.GET, "api/password/verify-email").permitAll()
                         .requestMatchers(HttpMethod.POST, "api/password/reset-password").permitAll()
                         .anyRequest().authenticated())
@@ -64,7 +65,13 @@ public class SecurityConfig {
         grantedAuthoritiesConverter.setAuthoritiesClaimName("scope"); // Alterado para "scope"
 
         JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
-        jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(grantedAuthoritiesConverter);
+        jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter((jwt) -> {
+            // Log detalhado do token recebido
+            System.out.println("Token Claims: " + jwt.getClaims());
+            System.out.println("Authorities Claim: " + jwt.getClaim("scope")); // Substitua "scope" se necessário
+            return grantedAuthoritiesConverter.convert(jwt);
+        });
+
         return jwtAuthenticationConverter;
     }
 
@@ -74,6 +81,7 @@ public class SecurityConfig {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000")); // Origem permitida
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE")); // Métodos HTTP permitidos
+        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
         configuration.setAllowedHeaders(Arrays.asList("*")); // Cabeçalhos permitidos
         configuration.setAllowCredentials(true); // Permitir credenciais
 
