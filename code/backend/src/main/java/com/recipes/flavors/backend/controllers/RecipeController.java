@@ -3,8 +3,14 @@ package com.recipes.flavors.backend.controllers;
 import com.recipes.flavors.backend.entities.Recipe;
 import com.recipes.flavors.backend.entities.dto.recipe.RecipeCreateDTO;
 import com.recipes.flavors.backend.entities.dto.recipe.RecipeDTO;
+import com.recipes.flavors.backend.entities.dto.recipe.RecipeHistoryRequestDTO;
+import com.recipes.flavors.backend.entities.dto.recipe.RecipeHistoryResponseDTO;
 import com.recipes.flavors.backend.services.RecipeService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -47,7 +53,7 @@ public class RecipeController {
     public ResponseEntity<Map<String, Object>> gatAllRecipes(@RequestParam(defaultValue = "0") int offset,
                                                             @RequestParam(defaultValue = "10") int limit) {
 
-        List<Recipe> recipes = recipeService.findAll(offset, limit);
+        List<Recipe> recipes = recipeService.findAll(offset, limit).stream().filter(r -> !r.isDeleted()).toList();
 
         Long totalCount = recipeService.countRecipes();
 
@@ -108,8 +114,30 @@ public class RecipeController {
         return ResponseEntity.ok(response);
     }
 
+    @PostMapping("/history")
+    public ResponseEntity<Page<RecipeHistoryResponseDTO>> getHistory(
+            @RequestBody RecipeHistoryRequestDTO requestDTO,
+            @RequestParam(defaultValue = "0") int offset,
+            @RequestParam(defaultValue = "10") int limit,
+            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "asc") String sortDirection) {
 
-    @PreAuthorize("permitAll()")
+        System.out.println("Request DTO recebido: " + requestDTO);
+
+        Pageable pageable = PageRequest.of(
+                offset,
+                limit,
+                sortDirection.equalsIgnoreCase("asc") ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending()
+        );
+
+        Page<RecipeHistoryResponseDTO> historyPage = recipeService.getHistory(requestDTO, pageable);
+
+        System.out.println("ResponseDTO: " + historyPage);
+
+        return ResponseEntity.ok(historyPage);
+    }
+
+    @PreAuthorize("isAuthenticated()")
     @PostMapping
     public ResponseEntity<Recipe>create(@Valid @RequestBody RecipeCreateDTO obj) {
 

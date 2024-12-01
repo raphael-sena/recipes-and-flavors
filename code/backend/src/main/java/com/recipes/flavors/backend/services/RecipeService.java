@@ -4,16 +4,23 @@ import com.recipes.flavors.backend.entities.Ingredient;
 import com.recipes.flavors.backend.entities.Method;
 import com.recipes.flavors.backend.entities.Recipe;
 import com.recipes.flavors.backend.entities.User;
+import com.recipes.flavors.backend.entities.dto.ingredient.IngredientDTO;
+import com.recipes.flavors.backend.entities.dto.method.MethodDTO;
 import com.recipes.flavors.backend.entities.dto.recipe.RecipeCreateDTO;
 import com.recipes.flavors.backend.entities.dto.recipe.RecipeDTO;
+import com.recipes.flavors.backend.entities.dto.recipe.RecipeHistoryRequestDTO;
+import com.recipes.flavors.backend.entities.dto.recipe.RecipeHistoryResponseDTO;
 import com.recipes.flavors.backend.repositories.IngredientRepository;
 import com.recipes.flavors.backend.repositories.MethodRepository;
 import com.recipes.flavors.backend.repositories.RecipeRepository;
 import com.recipes.flavors.backend.repositories.UserRepository;
 import com.recipes.flavors.backend.services.exceptions.ObjectNotFoundException;
+import com.recipes.flavors.backend.specifications.RecipeSpecifications;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -70,6 +77,24 @@ public class RecipeService {
         Pageable pageable = PageRequest.of(offset / limit, limit);
         return recipeRepository.findDeletedByUserId(userId, pageable).getContent();
     }
+
+    @Transactional
+    public Page<RecipeHistoryResponseDTO> getHistory(RecipeHistoryRequestDTO requestDTO, Pageable pageable) {
+        Specification<Recipe> spec = Specification.where(RecipeSpecifications.hasUserNames(requestDTO.userName()))
+                .and(RecipeSpecifications.hasRecipeName(requestDTO.name()))
+                .and(RecipeSpecifications.hasTotalTime(requestDTO.totalTime()))
+                .and(RecipeSpecifications.hasServings(requestDTO.servings()))
+                .and(RecipeSpecifications.hasDietType(requestDTO.dietType()))
+                .and(RecipeSpecifications.hasCuisineType(requestDTO.cuisineType()))
+                .and(RecipeSpecifications.hasDifficulty(requestDTO.difficulty()))
+                .and(RecipeSpecifications.hasCategory(requestDTO.category()));
+
+        // Carrega as receitas com todas as relações necessárias
+        Page<Recipe> recipePage = recipeRepository.findAll(spec, pageable);
+
+        return recipePage.map(this::toRecipeHistoryResponseDTO);
+    }
+
 
     @Transactional
     public Recipe create(Recipe obj) {
@@ -239,4 +264,26 @@ public class RecipeService {
     public Long countRecipes() {
         return recipeRepository.countRecipes();
     }
+
+    private RecipeHistoryResponseDTO toRecipeHistoryResponseDTO(Recipe recipe) {
+        return new RecipeHistoryResponseDTO(
+                recipe.getId(),
+                recipe.getUser().getName(),
+                recipe.getName(),
+                recipe.getTotalTime(),
+                recipe.getServings(),
+                recipe.getDietType(),
+                recipe.getCuisineType(),
+                recipe.getDifficulty(),
+                recipe.getCategory(),
+                Base64.getEncoder().encodeToString(recipe.getImage()), // Converter imagem para Base64
+                recipe.getIngredients().stream()
+                        .map(ingredient -> new IngredientDTO(ingredient.getName(), ingredient.getQuantity(), ingredient.getUnit()))
+                        .collect(Collectors.toList()),
+                recipe.getMethods().stream()
+                        .map(method -> new MethodDTO(method.getDescription()))
+                        .collect(Collectors.toList())
+        );
+    }
+
 }
