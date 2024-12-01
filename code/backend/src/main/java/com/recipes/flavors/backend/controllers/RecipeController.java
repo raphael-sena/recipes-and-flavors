@@ -68,6 +68,32 @@ public class RecipeController {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping("/my-recipes/deleted")
+    public ResponseEntity<Map<String, Object>> getMyDeletedRecipes(@RequestParam(defaultValue = "0") int offset,
+                                                            @RequestParam(defaultValue = "10") int limit) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return ResponseEntity
+                    .status(HttpStatus.UNAUTHORIZED)
+                    .build();
+        }
+
+        Jwt jwt = (Jwt) authentication.getPrincipal();
+        Long userId = Long.valueOf(jwt.getClaimAsString("sub"));
+
+        List<Recipe> recipes = recipeService.findDeletedRecipesByUserId(userId, offset, limit);
+
+        Long totalCount = recipeService.countRecipesByUserId(userId);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("recipes", recipes);
+        response.put("totalCount", totalCount);
+
+        return ResponseEntity.ok(response);
+    }
+
+
     @PreAuthorize("permitAll()")
     @PostMapping
     public ResponseEntity<Recipe>create(@Valid @RequestBody RecipeCreateDTO obj) {

@@ -34,18 +34,20 @@ const RecipeModal: React.FC<RecipeModalProps> = ({
             <div className="flex justify-between items-center">
                 <div className="flex items-center gap-2">
                     <h2 className="text-2xl font-bold">{recipe.name}</h2>
+                    {!recipe.deleted && (
                     <Link
-                        href={{
-                            pathname: '/my-recipes/' + recipe.id + '/edit',
-                          }}
-                        >
-                        <div className="relative group">
-                            <IoPencil/>
-                            <span className="absolute left-1/2 transform -translate-x-1/2 bottom-full mb-1 text-sm text-gray-700 opacity-0 group-hover:opacity-100 transition-opacity">
-                                Edit
-                            </span>
-                        </div>
+                      href={{
+                        pathname: '/my-recipes/' + recipe.id + '/edit',
+                      }}
+                    >
+                      <div className="relative group">
+                        <IoPencil />
+                        <span className="absolute left-1/2 transform -translate-x-1/2 bottom-full mb-1 text-sm text-gray-700 opacity-0 group-hover:opacity-100 transition-opacity">
+                          Edit
+                        </span>
+                      </div>
                     </Link>
+                  )}
                 </div>
                 <button
                     onClick={onClose}

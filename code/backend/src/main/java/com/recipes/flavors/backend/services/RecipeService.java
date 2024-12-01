@@ -60,6 +60,12 @@ public class RecipeService {
     }
 
     @Transactional
+    public List<Recipe> findDeletedRecipesByUserId(Long userId, int offset, int limit) {
+        Pageable pageable = PageRequest.of(offset / limit, limit);
+        return recipeRepository.findDeletedByUserId(userId, pageable).getContent();
+    }
+
+    @Transactional
     public Recipe create(Recipe obj) {
         obj.setTotalTime(totalTime(obj.getPreparationTime(), obj.getCookTime()));
         return recipeRepository.save(obj);
