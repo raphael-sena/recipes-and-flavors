@@ -81,8 +81,9 @@ public class RecipeService {
     }
 
     public void delete(Long id) {
-        findById(id);
-        this.recipeRepository.deleteById(id);
+        Recipe recipe = findById(id);
+        recipe.setDeleted(true);
+        this.recipeRepository.save(recipe);
     }
 
     @Transactional
