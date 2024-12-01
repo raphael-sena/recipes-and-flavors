@@ -2,9 +2,10 @@ import { useEffect, useState } from "react";
 import { HiLogout, HiMenuAlt2, HiHome } from "react-icons/hi";
 import { BiSolidCategoryAlt, BiSolidFoodMenu } from "react-icons/bi";
 import { MdAssignmentAdd } from "react-icons/md";
-import { FaCoffee, FaSearch, FaStar } from "react-icons/fa";
+import { FaCoffee, FaSearch } from "react-icons/fa";
 import { GiHotMeal, GiMeal, GiStairsCake } from "react-icons/gi";
 import { useAuth } from "@/context/UseAuth";
+import Link from 'next/link'
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -51,9 +52,14 @@ const Navbar = () => {
   return (
     <div>
       {/* Menu fixo à esquerda em telas grandes */}
-      <nav className="hidden md:flex md:flex-col bg-background text-white md:w-64 md:fixed md:top-0 md:left-0 md:max-h-full">
+      <nav className="hidden md:flex md:flex-col bg-background text-white md:w-64 md:fixed md:top-0 md:left-0 md:max-h-full z-20">
         <div className="flex items-center justify-center h-16 mt-6 bg-background">
-          <a href="/home">
+          <Link
+            href={{
+              pathname: "/about",
+            }}
+            target="_blank"
+          >
             <img
               src="/img/Recipes&Flavors.png"
               alt="Logo Recipes & Flavors"
@@ -61,7 +67,7 @@ const Navbar = () => {
               height={70}
               className="rounded-full"
             />
-          </a>
+          </Link>
         </div>
         <ul className="flex flex-col space-y-4 mt-4 text-darkBlue divide-x divide-darkBlue">
           <li className="px-4 py-2 hover:bg-darkBlue hover:text-light">
@@ -76,7 +82,7 @@ const Navbar = () => {
               <GiHotMeal />
               <p className="px-2">Recipes</p>
             </div>
-            <ul className="absolute left-60 z-20 top-0 bg-darkBlue text-light shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 ease-in-out ml-1 w-full">
+            <ul className="absolute left-60 top-0 bg-darkBlue text-light shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 ease-in-out ml-1 w-full">
               <li className="hover:bg-blue hover:text-darkBlue">
                 <a
                   href="/my-recipes"
@@ -103,7 +109,7 @@ const Navbar = () => {
               <BiSolidCategoryAlt />
               <p className="px-2">Category</p>
             </div>
-            <ul className="absolute left-60 z-20 top-0 bg-darkBlue text-light shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 ease-in-out ml-1 w-full">
+            <ul className="absolute left-60 top-0 bg-darkBlue text-light shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 ease-in-out ml-1 w-full">
               <li className="hover:bg-blue hover:text-darkBlue">
                 <a
                   href="/recipes=?breakfast"
@@ -163,16 +169,22 @@ const Navbar = () => {
             <span className="sr-only">Toggle menu</span>
             {isOpen ? <HiMenuAlt2 /> : <HiMenuAlt2 />}
           </button>
-          <img
-            src="/img/Recipes&Flavors.png"
-            alt="Logo Recipes & Flavors"
-            width={40}
-            height={40}
-            className="rounded-full"
-          />
+          <Link
+            href={{
+              pathname: '/about'
+            }}
+          >
+            <img
+              src="/img/Recipes&Flavors.png"
+              alt="Logo Recipes & Flavors"
+              width={40}
+              height={40}
+              className="rounded-full"
+            />
+          </Link>
         </div>
         {isOpen && (
-          <div className="absolute inset-0 bg-lightBlue text-light backdrop-blur-sm flex justify-between items-left justify-top p-5">
+          <div className="absolute inset-0 bg-lightBlue text-light backdrop-blur-sm flex justify-between items-left justify-top p-5 z-50">
             <div>
               <div>
                 {user ? (
@@ -223,37 +235,18 @@ const Navbar = () => {
                   </li>
                 </li>
 
-                <li className="px-4 py-2">
-                  <div className="flex items-center text-center">
-                    <BiSolidCategoryAlt />
-                    <p className="px-2">Categories</p>
-                  </div>
-                  <li className="ml-8">
-                    <a href="/recipe" className="flex items-center text-center">
-                      <FaCoffee />
-                      <p className="px-2">Breakfast</p>
-                    </a>
+                <Link
+                  href={{
+                    pathname: '/search'
+                  }}
+                >
+                  <li className="px-4 py-2">
+                    <div className="flex items-center text-center">
+                      <FaSearch />
+                      <p className="px-2">Search</p>
+                    </div>
                   </li>
-                  <li className="ml-8">
-                    <a href="/recipe" className="flex items-center text-center">
-                      <GiMeal />
-                      <p className="px-2">Lunch / Dinner</p>
-                    </a>
-                  </li>
-                  <li className="ml-8">
-                    <a href="/recipe" className="flex items-center text-center">
-                      <GiStairsCake />
-                      <p className="px-2">Dessert</p>
-                    </a>
-                  </li>
-                </li>
-
-                <li className="px-4 py-2 ">
-                  <a href="/home" className="flex items-center text-center">
-                    <FaStar />
-                    <p className="px-2">Favourites</p>
-                  </a>
-                </li>
+                </Link>
 
                 <li className="px-4 py-2 ">
                   <button onClick={handleLogout}>
