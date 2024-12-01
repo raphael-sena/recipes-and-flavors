@@ -243,7 +243,7 @@ const EditRecipeComponent = ({ recipeId }: { recipeId: number }) => {
       );
   
       alert("Recipe deleted successfully!");
-      // window.location.href = "/my-recipes";
+      window.location.href = "/my-recipes";
     } catch (error) {
       console.error("Error deleting recipe:", error);
       alert("Failed to delete recipe. Please try again.");

@@ -10,6 +10,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.validation.FieldError;
@@ -52,6 +53,14 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler imple
             WebRequest request
     ) {
         return buildErrorResponse(accessDeniedException, "Access Denied: " + accessDeniedException.getMessage(), HttpStatus.FORBIDDEN, request);
+    }
+
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<Object> handleBadCredentialsException(
+            BadCredentialsException badCredentialsException,
+            WebRequest request
+    ) {
+        return buildErrorResponse(badCredentialsException, "Bad Credentials: " + badCredentialsException.getMessage(), HttpStatus.BAD_REQUEST, request);
     }
 
     @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
