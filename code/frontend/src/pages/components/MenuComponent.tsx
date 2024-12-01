@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { HiLogout, HiMenuAlt2, HiHome } from "react-icons/hi";
 import { BiSolidCategoryAlt, BiSolidFoodMenu } from "react-icons/bi";
 import { MdAssignmentAdd } from "react-icons/md";
-import { FaCoffee, FaStar } from "react-icons/fa";
+import { FaCoffee, FaSearch, FaStar } from "react-icons/fa";
 import { GiHotMeal, GiMeal, GiStairsCake } from "react-icons/gi";
 import { useAuth } from "@/context/UseAuth";
 
@@ -135,9 +135,9 @@ const Navbar = () => {
           </li>
 
           <li className="px-4 py-2 hover:bg-darkBlue hover:text-light">
-            <a href="/recipes/{user.id}favourites" className="flex items-center text-center">
-              <FaStar />
-              <p className="px-2">Favourites</p>
+            <a href="/search" className="flex items-center text-center">
+              <FaSearch />
+              <p className="px-2">Search</p>
             </a>
           </li>
 

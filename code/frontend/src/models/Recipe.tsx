@@ -15,10 +15,10 @@ export type Recipe = {
     cookTime: number;
     totalTime: number;
     servings: number;
-    dietType: DietType;
-    cuisineType: CuisineType;
-    difficulty: Difficulty;
-    category: Category;
+    dietType: DietType | null;
+    cuisineType: CuisineType | null;
+    difficulty: Difficulty | null;
+    category: Category | null;
     reviews: Review[];
     deleted: boolean;
 }
