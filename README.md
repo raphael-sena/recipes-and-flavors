@@ -1,10 +1,17 @@
 # Recipes & Flavors
+![image](https://github.com/user-attachments/assets/b414c7f3-ed6d-4094-bd62-5fcfbaefa858)
 
 ## Descrição
-
 O Recipes & Flavors é uma aplicação web para compartilhamento de receitas de culinária, com filtros avançados para pesquisa de receitas por categorias como tipo de dieta, tipo de cozinha, dificuldade, entre outros. A aplicação foi construída utilizando Java com Spring Boot para o backend, e Next.js, Typescript e TailwindCSS para o frontend. A arquitetura segue o padrão MVC (Model-View-Controller) no backend, com a implementação de autenticação via JWT (JSON Web Token) para segurança, além da persistência de dados no Banco PostgreSQL.
 
 A aplicação também é conteinerizada com o uso do Docker, facilitando o deploy e a escalabilidade.
+
+## Planejamento e Documentação
+O planejamento, a documentação e os diagrams desenvolvidos para concepção e desenvolvimento da solução para o problema proposto, estão disponíveis no caminho [./docs](https://github.com/raphael-sena/recipes-and-flavors/tree/main/docs) da aplicação, e lá é possível encontrar o figma desenvolvido, disponível também no [link](https://www.figma.com/proto/Vngm0DYncrRASCs8I6hsAe/recipes%26flavors?node-id=12-2&node-type=canvas&t=nJdT6WyAAabqxGyP-0&scaling=scale-down&content-scaling=fixed&page-id=0%3A1&starting-point-node-id=12%3A2).
+### Documentos:
+* [Documento de Visão](https://github.com/raphael-sena/recipes-and-flavors/blob/b07a10516507d9130cb7e1e0c72c22f3a91b4e1c/docs/vision-document/Recipes%26Flavors-Documento_de_Visao.pdf): documento onde estão todos os requisitos, tanto funcionais quanto não-funcionais elencados por mim
+* [Diagrama de Classe UML](https://github.com/raphael-sena/recipes-and-flavors/blob/b07a10516507d9130cb7e1e0c72c22f3a91b4e1c/docs/diagrams/class-diagram/uml-class-diagram.png): documento para abstrair a relação entre as classes e definição de ORM.
+* [Protótipo Interativo](https://github.com/raphael-sena/recipes-and-flavors/tree/b07a10516507d9130cb7e1e0c72c22f3a91b4e1c/docs/prototype): disponível no readme no link ao lado.
 
 ## Tecnologias
 * Backend: Java, Spring Boot, PostgreSQL
@@ -152,6 +159,17 @@ A aplicação também é conteinerizada com o uso do Docker, facilitando o deplo
     npm run dev
   ```
 5. O frontend estará disponível em [http://localhost:3000](http://localhost:3000).
+
+
+## Desenvolvimento: 
+<table align="center">
+  <tbody>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/raphael-sena"><img src="https://avatars.githubusercontent.com/raphael-sena" width="100px;" alt="Raphael Sena"/><br /><sub><b>Raphael Sena Augusto de Brito</b></sub></a><br /><a href="https://github.com/raphael-sena/recipes-and-flavors/commits?author=raphael-sena" title="Code">Commits 💻</a></td>
+    </tr>
+  </tbody>
+</table>
+
 
 
 
