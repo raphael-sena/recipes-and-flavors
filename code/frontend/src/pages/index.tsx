@@ -1,115 +1,61 @@
-import Image from "next/image";
-import localFont from "next/font/local";
+import Footer from "./components/FooterComponent";
+import LoginComponent from "./components/LoginComponent";
+import SignInButtonComponent from "./components/SignInButtonComponent";
+import ScrollToReachUs from "./components/ScrollToReachUsComponent";
+import GoBackButton from "./components/GoBackButtonComponent";
 
-const geistSans = localFont({
-  src: "./fonts/GeistVF.woff",
-  variable: "--font-geist-sans",
-  weight: "100 900",
-});
-const geistMono = localFont({
-  src: "./fonts/GeistMonoVF.woff",
-  variable: "--font-geist-mono",
-  weight: "100 900",
-});
+export default function LandingPage() {
+  
+  const handleSignIn = () => {
+    window.location.href = "/login";
+  }
 
-export default function Home() {
   return (
-    <div
-      className={`${geistSans.variable} ${geistMono.variable} grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]`}
-    >
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/pages/index.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+    <div className="lg:block lg:px-12 grid grid-rows-[1fr_auto] min-h-screen items-center justify-items-center p-8 sm:p-8 bg-background">
+              <GoBackButton />
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+
+      {/* Conteúdo Principal */}
+      <div className="lg:grid lg:grid-cols-2 flex flex-col gap-8 items-center lg:justify-items-center font-mulish text-darkblue w-full row-start-1 lg:divide-x lg:divide-black">
+
+        <div className="lg:ml-12 lg:pl-12 justify-center lg:justify-self-end">
+          <div className="pt-12 text-4xl">
+            <h1>Welcome to</h1>
+            <h1 className="font-extrabold">Recipes&Flavors</h1>
+          </div>
+
+          <img
+            src="/img/Recipes&Flavors.png"
+            alt="Logo Recipes & Flavors"
+            width={400}
+            height={400}
+            className="rounded-full py-8"
+          />
+
+          <h1 className="text-3xl font-bold text-center py-2 mb-12">
+            Start making your <br /> days foodier!
+          </h1>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
+
+        <div
+          className="lg:hidden lg:w-full w-full"
         >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
+          <SignInButtonComponent 
+            onClick={handleSignIn} 
+            text="Sign in"
           />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+        </div>
+
+        <ScrollToReachUs />
+
+        <div className="hidden lg:block lg:mr-20 lg:p-20 order-3 pt-10 mt-10 lg:justify-self-start">
+          <LoginComponent />
+        </div>
+        
+      </div>
+
+      {/* Footer */}
+      <Footer />
     </div>
   );
 }

@@ -24,7 +24,7 @@ public class UserCreateDTO {
     @Size(min = 8, max = 60)
     private String password;
 
-    @NotBlank
+    @NotBlank(message = "Role is required")
     private String role;
 
 }

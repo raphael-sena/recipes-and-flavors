@@ -15,18 +15,16 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Where;
+import org.hibernate.annotations.*;
 
 import javax.validation.constraints.NotNull;
+import java.time.Duration;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -37,7 +35,10 @@ import java.util.Set;
 @NoArgsConstructor
 @Data
 @SQLDelete(sql = "UPDATE tb_recipe SET deleted = true WHERE id=?")
-@Where(clause = "deleted=false")
+@FilterDef(name = "deletedRecipeFilter",
+        parameters = @ParamDef(name = "isDeleted", type = Boolean.class))
+@Filter(name = "deletedRecipeFilter",
+        condition = "deleted = :isDeleted")
 public class Recipe {
 
     @Id
@@ -67,18 +68,17 @@ public class Recipe {
     @JsonIgnoreProperties({"recipe"})
     private List<Method> methods;
 
-    @Lob
-    @Column(unique = true)
+    @Column(name = "image", columnDefinition = "BYTEA")
     private byte[] image;
 
     @Column(name = "preparationTime")
-    private Long preparationTime;
+    private Duration preparationTime;
 
     @Column(name = "cookTime")
-    private Long cookTime;
+    private Duration  cookTime;
 
     @Column(name = "totalTime")
-    private Long totalTime;
+    private Duration  totalTime;
 
     @Column(name = "servings")
     private Integer servings;
@@ -98,5 +98,6 @@ public class Recipe {
     @OneToMany(mappedBy = "recipe", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Review> reviews = new HashSet<>();
 
+    @Column(name = "deleted")
     private boolean deleted = Boolean.FALSE;
 }

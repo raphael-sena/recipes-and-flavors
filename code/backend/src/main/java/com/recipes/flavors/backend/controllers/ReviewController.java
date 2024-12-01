@@ -2,22 +2,21 @@ package com.recipes.flavors.backend.controllers;
 
 import com.recipes.flavors.backend.entities.Review;
 import com.recipes.flavors.backend.entities.dto.review.ReviewCreateDTO;
+import com.recipes.flavors.backend.entities.dto.review.ReviewResponseDTO;
 import com.recipes.flavors.backend.entities.dto.review.ReviewUpdateDTO;
+import com.recipes.flavors.backend.entities.dto.review.ReviewUserDTO;
 import com.recipes.flavors.backend.services.ReviewService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/recipes")
@@ -36,19 +35,50 @@ public class ReviewController {
                 .body(obj);
     }
 
-    @PostMapping("/{recipeId}/review")
-    public ResponseEntity<String> create(@Validated @RequestBody ReviewCreateDTO obj, @PathVariable Long recipeId) {
+    @GetMapping("/{recipeId}/review")
+    public ResponseEntity<Page<ReviewResponseDTO>> getReviewsByRecipe(
+            @PathVariable Long recipeId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
 
-        if (obj.getUser() == null) {
-            return ResponseEntity.badRequest().body("User cannot be null.");
+        Page<Review> reviews = reviewService.findByRecipeId(recipeId, PageRequest.of(page, size));
+
+        Page<ReviewResponseDTO> response = reviews.map(review ->
+                new ReviewResponseDTO(
+                        review.getId(),
+                        review.getComment(),
+                        review.getRating(),
+                        new ReviewUserDTO(review.getUser().getId(), review.getUser().getName())
+                )
+        );
+
+        return ResponseEntity.ok(response);
+    }
+
+
+    @PostMapping("/{recipeId}/review")
+    public ResponseEntity<ReviewResponseDTO> create(@Validated @RequestBody ReviewCreateDTO obj, @PathVariable Long recipeId) {
+
+        System.out.println("Received DTO" + obj.toString());
+
+        if (obj.getUserId() == null) {
+            return ResponseEntity.badRequest().body(null);
         }
 
         if (recipeId == null) {
-            return ResponseEntity.badRequest().body("Recipe id cannot be null.");
+            return ResponseEntity.badRequest().body(null);
         }
 
         Review review = this.reviewService.fromDTO(obj, recipeId);
         Review newReview = this.reviewService.create(review, recipeId);
+        ReviewResponseDTO responseDTO = new ReviewResponseDTO(
+                newReview.getId(),
+                newReview.getComment(),
+                newReview.getRating(),
+                new ReviewUserDTO(newReview.getUser().getId(), newReview.getUser().getName())
+        );
+
+        System.out.println("Response DTO : " + responseDTO.toString());
 
         URI uri = ServletUriComponentsBuilder
                 .fromCurrentRequest()
@@ -58,7 +88,7 @@ public class ReviewController {
 
         return ResponseEntity
                 .created(uri)
-                .build();
+                .body(responseDTO);
     }
 
     @PutMapping("/{recipeId}/review/{id}")
@@ -75,7 +105,8 @@ public class ReviewController {
     }
 
     @DeleteMapping("/{recipeId}/review/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
+    public ResponseEntity<Void> delete(@PathVariable Long recipeId, @PathVariable Long id) {
+        System.out.println("Recebida requisição para excluir review com ID " + recipeId + " da receita " + id);
 
         this.reviewService.delete(id);
         return ResponseEntity

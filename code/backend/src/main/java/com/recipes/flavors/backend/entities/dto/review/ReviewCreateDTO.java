@@ -15,7 +15,7 @@ public class ReviewCreateDTO {
     private String comment;
 
     @NotNull(message = "User cannot be null")
-    private User user;
+    private Long userId;
 
     @NotNull(message = "Rating cannot be null")
     private Integer rating;
