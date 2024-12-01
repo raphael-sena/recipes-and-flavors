@@ -8,6 +8,7 @@ import { IoPencil } from "react-icons/io5";
 import Link from "next/link";
 import { Review } from "@/models/Review";
 import { FaRegStar, FaStar } from "react-icons/fa";
+import { RecipeHistoryItem } from "@/models/RecipeHistory";
 
 interface RecipeModalProps {
   recipe: Recipe | null;
@@ -352,7 +353,7 @@ const RecipeModal: React.FC<RecipeModalProps> = ({
           <div className="mt-4 sm:w-1/2 sm:px-2">
             <h3 className="text-lg font-semibold">Ingredients:</h3>
             <ul className="list-disc pl-5 list-inside">
-              {recipe.ingredients.map((ingredient: Ingredient, index) => (
+              {recipe.ingredients.map((ingredient, index) => (
                 <li key={index} className="relative">
                   <span>{ingredient.name}</span>
                   <input
@@ -368,7 +369,7 @@ const RecipeModal: React.FC<RecipeModalProps> = ({
           <div className="mt-4 sm:w-1/2 sm:px-2">
             <h3 className="text-lg font-semibold">Methods:</h3>
             <ol className="list-decimal pl-5 list-inside">
-              {recipe.methods.map((method: Method, index) => (
+              {recipe.methods.map((method, index) => (
                 <li key={index} className="relative">
                   <span>{method.description}</span>
                   <input

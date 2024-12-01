@@ -118,7 +118,9 @@ const MyRecipes = () => {
         <MenuComponent />
       </div>
       <div className="md:ml-64 jsutify-center top-20">
-        <div className="relative z-10 justify-center">
+
+        {/* Section All Recipes */}
+        <section className="relative z-10 justify-center">
           <div className="flex justify-between ">
             <div className="flex justify-between relative ">
               <h1 className="md:text-4xl md:p-5 px-4 md:text-start w-full text-center text-3xl text-darkBlue mb-2">
@@ -186,7 +188,8 @@ const MyRecipes = () => {
           <span className="pagination flex w-full justify-center hidden md:flex">
               Page {currentPage} of {totalPages}
           </span>
-        </div>
+        </section>
+
       </div>
       <FooterComponent />
     </div>
