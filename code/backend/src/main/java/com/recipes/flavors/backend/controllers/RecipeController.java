@@ -3,13 +3,20 @@ package com.recipes.flavors.backend.controllers;
 import com.recipes.flavors.backend.entities.Recipe;
 import com.recipes.flavors.backend.entities.dto.recipe.RecipeCreateDTO;
 import com.recipes.flavors.backend.entities.dto.recipe.RecipeDTO;
+import com.recipes.flavors.backend.entities.dto.recipe.RecipeHistoryRequestDTO;
+import com.recipes.flavors.backend.entities.dto.recipe.RecipeHistoryResponseDTO;
 import com.recipes.flavors.backend.services.RecipeService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.validation.annotation.Validated;
@@ -20,6 +27,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.net.URI;
+import java.nio.file.attribute.UserPrincipal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,6 +47,21 @@ public class RecipeController {
         return ResponseEntity
                 .ok()
                 .body(obj);
+    }
+
+    @GetMapping
+    public ResponseEntity<Map<String, Object>> gatAllRecipes(@RequestParam(defaultValue = "0") int offset,
+                                                            @RequestParam(defaultValue = "10") int limit) {
+
+        List<Recipe> recipes = recipeService.findAll(offset, limit).stream().filter(r -> !r.isDeleted()).toList();
+
+        Long totalCount = recipeService.countRecipes();
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("recipes", recipes);
+        response.put("totalCount", totalCount);
+
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/my-recipes")
@@ -66,7 +89,55 @@ public class RecipeController {
         return ResponseEntity.ok(response);
     }
 
-    @PreAuthorize("permitAll()")
+    @GetMapping("/my-recipes/deleted")
+    public ResponseEntity<Map<String, Object>> getMyDeletedRecipes(@RequestParam(defaultValue = "0") int offset,
+                                                            @RequestParam(defaultValue = "10") int limit) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return ResponseEntity
+                    .status(HttpStatus.UNAUTHORIZED)
+                    .build();
+        }
+
+        Jwt jwt = (Jwt) authentication.getPrincipal();
+        Long userId = Long.valueOf(jwt.getClaimAsString("sub"));
+
+        List<Recipe> recipes = recipeService.findDeletedRecipesByUserId(userId, offset, limit);
+
+        Long totalCount = recipeService.countRecipesByUserId(userId);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("recipes", recipes);
+        response.put("totalCount", totalCount);
+
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/history")
+    public ResponseEntity<Page<RecipeHistoryResponseDTO>> getHistory(
+            @RequestBody RecipeHistoryRequestDTO requestDTO,
+            @RequestParam(defaultValue = "0") int offset,
+            @RequestParam(defaultValue = "10") int limit,
+            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "asc") String sortDirection) {
+
+        System.out.println("Request DTO recebido: " + requestDTO);
+
+        Pageable pageable = PageRequest.of(
+                offset,
+                limit,
+                sortDirection.equalsIgnoreCase("asc") ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending()
+        );
+
+        Page<RecipeHistoryResponseDTO> historyPage = recipeService.getHistory(requestDTO, pageable);
+
+        System.out.println("ResponseDTO: " + historyPage);
+
+        return ResponseEntity.ok(historyPage);
+    }
+
+    @PreAuthorize("isAuthenticated()")
     @PostMapping
     public ResponseEntity<Recipe>create(@Valid @RequestBody RecipeCreateDTO obj) {
 
@@ -105,8 +176,10 @@ public class RecipeController {
                 .build();
     }
 
+    @PreAuthorize("isAuthenticated()")
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
+    public ResponseEntity<Void> delete(@PathVariable Long id,
+                                       @AuthenticationPrincipal UserPrincipal principal) {
         this.recipeService.delete(id);
 
         return ResponseEntity

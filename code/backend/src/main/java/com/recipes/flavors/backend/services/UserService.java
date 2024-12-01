@@ -47,7 +47,17 @@ public class UserService {
     }
 
     public Optional<User> findByEmail(String email) {
-        return userRepository.findByEmail(email);
+        Optional<User> user = userRepository.findByEmail(email);
+        System.out.println("Finding user by email: " + email);
+        System.out.println("User found: " + user.isPresent());
+        user.ifPresent(u -> {
+            System.out.println("Found user details:");
+            System.out.println("ID: " + u.getId());
+            System.out.println("Email: " + u.getEmail());
+            System.out.println("Encoded Password: " + u.getPassword());
+            System.out.println("Roles: " + u.getRoles());
+        });
+        return user;
     }
 
     @Transactional
@@ -104,7 +114,7 @@ public class UserService {
         User user = new User();
         user.setEmail(obj.getEmail());
         user.setName(obj.getName());
-        user.setPassword(bCryptPasswordEncoder.encode(obj.getPassword()));
+        user.setPassword(obj.getPassword());
         user.setRoles(Set.of(role));
 
         return user;

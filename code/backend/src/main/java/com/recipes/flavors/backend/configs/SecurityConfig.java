@@ -43,8 +43,9 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(HttpMethod.POST, "/login").permitAll()
                         .requestMatchers(HttpMethod.POST, "/user").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/recipe").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/recipe").authenticated()
                         .requestMatchers(HttpMethod.PUT, "/recipe/**").authenticated()
+                        .requestMatchers(HttpMethod.PUT, "/recipes/**").authenticated()
                         .requestMatchers(HttpMethod.GET, "api/password/verify-email").permitAll()
                         .requestMatchers(HttpMethod.POST, "api/password/reset-password").permitAll()
                         .anyRequest().authenticated())

@@ -59,6 +59,9 @@ public class TokenController {
                 .expiresAt(now.plusSeconds(expiresIn))
                 .subject(user.getId().toString())
                 .claim("scope", scopes)
+                .claim("name", user.getName())
+                .claim("email", user.getEmail())
+                .claim("id", user.getId())
                 .build();
 
         var token = jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();

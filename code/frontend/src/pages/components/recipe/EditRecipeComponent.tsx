@@ -223,6 +223,33 @@ const EditRecipeComponent = ({ recipeId }: { recipeId: number }) => {
     setImage(null);
   };
 
+  const handleDeleteRecipe = async () => {
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this recipe? This action cannot be undone."
+    );
+  
+    if (!confirmDelete) return;
+  
+    try {
+      const token = localStorage.getItem("authtoken");
+      await fetch(
+        `http://localhost:8080/recipe/${recipeId}`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+  
+      alert("Recipe deleted successfully!");
+      window.location.href = "/my-recipes";
+    } catch (error) {
+      console.error("Error deleting recipe:", error);
+      alert("Failed to delete recipe. Please try again.");
+    }
+  };
+
   if (isLoading) {
     return <p>Loading recipe data...</p>;
   }
@@ -462,6 +489,14 @@ const EditRecipeComponent = ({ recipeId }: { recipeId: number }) => {
           className="bg-red-500 hover:bg-red-600 px-4 py-2 rounded-xl w-full mb-2"
         >
           Discard Changes
+        </button>
+
+        <button
+          type="button"
+          onClick={handleDeleteRecipe}
+          className="bg-red-700 hover:bg-red-800 px-4 py-2 rounded-xl w-full mb-2"
+        >
+          Delete Recipe
         </button>
       </div>
     </form>

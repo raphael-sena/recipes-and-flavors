@@ -52,12 +52,11 @@ public class UserController {
     }
 
     @GetMapping
-    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<List<User>> findAll() {
-        List<User> usuarios = this.userService.findAll();
+        List<User> users = this.userService.findAll();
         return ResponseEntity
                 .ok()
-                .body(usuarios);
+                .body(users);
     }
 
     @Transactional

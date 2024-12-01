@@ -29,7 +29,7 @@ const MyRecipes = () => {
       const offset: number = (page - 1) * itemsPerPage;
 
       const response = await fetch(
-        `http://localhost:8080/recipe/my-recipes?offset=${offset}&limit=${itemsPerPage}`,
+        `http://localhost:8080/recipe/my-recipes/deleted?offset=${offset}&limit=${itemsPerPage}`,
         {
           method: "GET",
           headers: {
@@ -188,11 +188,11 @@ const MyRecipes = () => {
         <div className="justify-end text-end mr-10">
           <Link 
             href={{
-            pathname: '/my-recipes/deleted',
+            pathname: '/my-recipes',
           }}
           >
             <button className="bg-black text-white p-2 rounded-lg"> 
-              <p>See My Deleted Recipes</p>
+              <p>Go Back to My-Recipes</p>
             </button>
           </Link>
         </div>

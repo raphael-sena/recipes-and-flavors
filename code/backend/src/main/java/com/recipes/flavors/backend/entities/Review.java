@@ -1,5 +1,6 @@
 package com.recipes.flavors.backend.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -11,6 +12,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotNull;
@@ -20,6 +22,7 @@ import javax.validation.constraints.NotNull;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
+@EqualsAndHashCode(exclude = {"user", "recipe"})
 public class Review {
 
     @Id
@@ -29,7 +32,7 @@ public class Review {
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false, updatable = false)
-    @JsonIgnoreProperties({"recipes"})
+    @JsonIgnoreProperties({"recipes", "name", "email", "password", "reviews", "roles"})
     private User user;
 
     @Column(name = "rating")

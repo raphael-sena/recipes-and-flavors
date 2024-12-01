@@ -15,16 +15,13 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Where;
+import org.hibernate.annotations.*;
 
 import javax.validation.constraints.NotNull;
 import java.time.Duration;
@@ -38,7 +35,10 @@ import java.util.Set;
 @NoArgsConstructor
 @Data
 @SQLDelete(sql = "UPDATE tb_recipe SET deleted = true WHERE id=?")
-@Where(clause = "deleted=false")
+@FilterDef(name = "deletedRecipeFilter",
+        parameters = @ParamDef(name = "isDeleted", type = Boolean.class))
+@Filter(name = "deletedRecipeFilter",
+        condition = "deleted = :isDeleted")
 public class Recipe {
 
     @Id
@@ -98,5 +98,6 @@ public class Recipe {
     @OneToMany(mappedBy = "recipe", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Review> reviews = new HashSet<>();
 
+    @Column(name = "deleted")
     private boolean deleted = Boolean.FALSE;
 }
