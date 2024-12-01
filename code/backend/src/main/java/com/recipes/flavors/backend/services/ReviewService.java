@@ -10,6 +10,9 @@ import com.recipes.flavors.backend.repositories.ReviewRepository;
 import com.recipes.flavors.backend.repositories.UserRepository;
 import com.recipes.flavors.backend.services.exceptions.ObjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,9 +26,12 @@ public class ReviewService {
     private ReviewRepository reviewRepository;
 
     @Autowired
-    private UserRepository userRepository;
+    private UserService userService;
+
     @Autowired
     private RecipeRepository recipeRepository;
+    @Autowired
+    private RecipeService recipeService;
 
 
     public Review findById(Long id) {
@@ -40,8 +46,6 @@ public class ReviewService {
         Optional<Recipe> recipe = recipeRepository.findById(recipeId);
 
         obj.setRecipe(recipe.get());
-
-        obj.setId(null);
         obj.setUser(obj.getUser());
         obj.setComment(obj.getComment());
         obj.setRating(obj.getRating());
@@ -63,6 +67,7 @@ public class ReviewService {
         return this.reviewRepository.save(newObj);
     }
 
+    @Transactional
     public void delete(Long id) {
         findById(id);
         this.reviewRepository.deleteById(id);
@@ -70,17 +75,12 @@ public class ReviewService {
 
     public Review fromDTO(@Valid ReviewCreateDTO obj, Long recipeId) {
 
-        if (obj.getUser() == null || obj.getUser().getId() == null) {
+        if (obj.getUserId() == null) {
             throw new ObjectNotFoundException("Usuário deve possuir um ID válido.");
         }
 
-        User user = userRepository
-                .findById(obj.getUser().getId())
-                .orElseThrow(() -> new ObjectNotFoundException("Usuário não encontrado!"));
-
-        Recipe recipe = recipeRepository
-                .findById(recipeId)
-                .orElseThrow(() -> new ObjectNotFoundException("Receita não encontrada!"));
+        User user = userService.findById(obj.getUserId());
+        Recipe recipe = recipeService.findById(recipeId);
 
         Review review = new Review();
         review.setComment(obj.getComment());
@@ -97,5 +97,9 @@ public class ReviewService {
         review.setComment(obj.getComment());
         review.setRating(obj.getRating());
         return review;
+    }
+
+    public Page<Review> findByRecipeId(Long recipeId, Pageable pageable) {
+        return reviewRepository.findByRecipeId(recipeId, pageable);
     }
 }

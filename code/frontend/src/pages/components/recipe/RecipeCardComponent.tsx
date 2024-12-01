@@ -4,6 +4,7 @@ import Flag from "react-world-flags";
 import { cuisines } from "../EnumComponents/CuisinesComponent";
 import { formatDuration } from "@/services/TimeService";
 import { getBase64Image } from "./RecipeModal";
+import { FaStar } from "react-icons/fa";
 
 interface RecipeCardProps {
   recipe: Recipe;
@@ -27,17 +28,19 @@ const RecipeCard: React.FC<RecipeCardProps> = ({ recipe }) => {
           style={{objectFit: 'cover'}}
         />
         <div className="absolute flex justify-between w-full top-4 left-2 px-2">
-          <div className="bg-lighterBlue px-5 items-center justify-center rounded-md text-center">
+          <div className="bg-lighterBlue flex p-1 px-3 items-center justify-center rounded-md text-center">
             {/* Verifica se há reviews */}
             {recipe.reviews.length > 0 ? (
-              <span>
+              <span className="flex items-center gap-1 text-white">
                 {(
                   recipe.reviews.reduce(
                     (acc, review) => acc + review.rating,
                     0
                   ) / recipe.reviews.length
                 ).toFixed(1)}{" "}
-                ⭐
+                <div className="text-white">
+                  <FaStar />
+                </div>
               </span>
             ) : (
               <span className="text-white font-semibold">No reviews</span>
@@ -57,13 +60,15 @@ const RecipeCard: React.FC<RecipeCardProps> = ({ recipe }) => {
 
       {/* Título, tempo de preparo, categoria e autor */}
       <div className="p-4 relative top-16 text-darkBlue bg-white rounded-b-lg h-full hover:cursor-pointer">
-        <h2 className="text-xl font-semibold mb-2">{recipe.name}</h2>
-        <div className="flex flex-wrap justify-between gap-2 md:gap-4">
-          <p>Total Time: {formatDuration((recipe.totalTime).toString())}</p>
-          <p>
-            {recipe.category.charAt(0).toUpperCase() +
-              recipe.category.slice(1).toLowerCase()}
+        <div className="flex justify-between items-start">
+          <h2 className="text-xl font-semibold mb-2">{recipe.name}</h2>
+          <p className="text-sm h-full">
+              {recipe.category.charAt(0).toUpperCase() +
+                recipe.category.slice(1).toLowerCase()}
           </p>
+        </div>
+        <div className="flex flex-wrap justify-between gap-2">
+          <p>Total Time: {formatDuration((recipe.totalTime).toString())}</p>
           <p>
             by:{" "}
             {recipe.user.name.charAt(0).toUpperCase() +

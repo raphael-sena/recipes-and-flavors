@@ -5,6 +5,7 @@ import MenuComponent from "./components/MenuComponent";
 import RecipeCard from "./components/recipe/RecipeCardComponent";
 import RecipeModal from "./components/recipe/RecipeModal";
 import FooterComponent from "./components/FooterComponent";
+import { useRouter } from 'next/router';
 
 const MyRecipes = () => {
   const [recipes, setRecipes] = useState<Recipe[]>([]);
@@ -18,6 +19,8 @@ const MyRecipes = () => {
 
   const [isModalOpen, setModalOpen] = useState(false);
   const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null);
+
+  const router = useRouter();
 
   const fetchRecipes = async (page: number) => {
     try {
