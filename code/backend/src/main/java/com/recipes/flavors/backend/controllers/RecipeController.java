@@ -43,6 +43,21 @@ public class RecipeController {
                 .body(obj);
     }
 
+    @GetMapping
+    public ResponseEntity<Map<String, Object>> gatAllRecipes(@RequestParam(defaultValue = "0") int offset,
+                                                            @RequestParam(defaultValue = "10") int limit) {
+
+        List<Recipe> recipes = recipeService.findAll(offset, limit);
+
+        Long totalCount = recipeService.countRecipes();
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("recipes", recipes);
+        response.put("totalCount", totalCount);
+
+        return ResponseEntity.ok(response);
+    }
+
     @GetMapping("/my-recipes")
     public ResponseEntity<Map<String, Object>> getMyRecipes(@RequestParam(defaultValue = "0") int offset,
                                                             @RequestParam(defaultValue = "10") int limit) {

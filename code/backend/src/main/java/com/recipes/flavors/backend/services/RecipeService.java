@@ -54,6 +54,12 @@ public class RecipeService {
     }
 
     @Transactional
+    public List<Recipe> findAll(int offset, int limit) {
+        Pageable pageable = PageRequest.of(offset / limit, limit);
+        return recipeRepository.findAll(pageable).getContent();
+    }
+
+    @Transactional
     public List<Recipe> findRecipesByUserId(Long userId, int offset, int limit) {
         Pageable pageable = PageRequest.of(offset / limit, limit);
         return recipeRepository.findByUserId(userId, pageable).getContent();
@@ -228,5 +234,9 @@ public class RecipeService {
 
     public Long countRecipesByUserId(Long userId) {
         return recipeRepository.countByUserId(userId);
+    }
+
+    public Long countRecipes() {
+        return recipeRepository.countRecipes();
     }
 }
