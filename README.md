@@ -128,6 +128,8 @@ A Recipes & Flavors possui, além do diretório de documentação já descrito a
   O projeto é conteinerizado usando Docker, permitindo que a aplicação seja facilmente empacotada, distribuída e executada em qualquer ambiente. O Dockerfile e a configuração do Docker Compose foram criados para facilitar o processo de build e execução dos containers.
 5. UI Responsiva com TailwindCSS
   O frontend é desenvolvido utilizando TailwindCSS, garantindo uma interface responsiva e moderna, com um design simples e personalizável.
+6. Recuperação de Senha
+   O sistema conta com uma recuperação de senha simples.
 
 ## Instruções para Execução
 ### Backend
