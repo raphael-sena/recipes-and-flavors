@@ -21,7 +21,16 @@ O planejamento, a documentação e os diagrams desenvolvidos para concepção e 
 * Conteinerização: Docker
 * Arquitetura: MVC (Model-View-Controller)
 
-## Organização das Pastas
+## Organização de Diretórios
+A Recipes & Flavors possui, além do diretório de documentação já descrito anteriormente, um sub diretório destinado à código e desenvolvimento e que, por sua vez possui 2 subdiretórios, um detinado para o backend e o outro para o frontend. A árvore então, para exemplificar, ficaria assim: 
+```bash
+    ./recipes-and-flavors
+                    ├── /code
+                    │     └── /backend
+                    │     └── /frontend
+                    ├── /docs
+                    ├── README.md
+```
 ### Backend (Java + Spring Boot)
 
 ```
@@ -35,8 +44,8 @@ O planejamento, a documentação e os diagrams desenvolvidos para concepção e 
     │   │   │   │   │   │   ├── /configs
     │   │   │   │   │   │   ├── /controllers
     │   │   │   │   │   │   ├── /entities
-    │   │   │   │   │   │   |   ├── /dtos
-    │   │   │   │   │   │   |   ├── /enums
+    │   │   │   │   │   │   |   └── /dtos
+    │   │   │   │   │   │   |   └── /enums
     │   │   │   │   │   │   ├── /exceptions
     │   │   │   │   │   │   ├── /repositories
     │   │   │   │   │   │   ├── /services
