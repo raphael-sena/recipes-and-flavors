@@ -7,7 +7,7 @@ export default function About() {
           <GoBackButton />
       
           {/* Conteúdo Principal */}
-          <div className="text-center font-mulish text-darkblue w-full flex flex-col items-center">
+          <div className="text-center font-mulish text-darkblue w-full flex flex-col items-center min-h-screen">
             <div className="pt-12 text-4xl">
               <h1>Welcome to</h1>
               <h1 className="font-extrabold">Recipes&Flavors</h1>

@@ -16,7 +16,7 @@ type LoginFormData = {
 
 const validation = Yup.object().shape({
   email: Yup.string().email().required("Email é obrigatório"),
-  password: Yup.string().required("Senha é obrigatória"),
+  password: Yup.string().min(8).required("Senha é obrigatória"),
 });
 
 const LoginComponent = (props: Props) => {
@@ -80,7 +80,7 @@ const LoginComponent = (props: Props) => {
             <div className="relative flex items-center">
               <input
                 type={showPassword ? "text" : "password"}
-                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-darkBlue pr-10"
+                className="w-full px-4 py-2 block border rounded-lg focus:outline-none focus:ring-2 focus:ring-darkBlue pr-10"
                 placeholder="Enter your password"
                 required
                 {...register("password")}
@@ -108,7 +108,7 @@ const LoginComponent = (props: Props) => {
           </button>
         </form>
 
-        <a href="passwordReset" className="py-1 text-right text-darkBlue hover:text-lightBlue">
+        <a href="/password-reset" className="py-1 text-right text-darkBlue hover:text-lightBlue">
           <p>Forgot your password?</p>
         </a>
 

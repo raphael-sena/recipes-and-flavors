@@ -118,7 +118,7 @@ const MyRecipes = () => {
         <div className="relative z-10 justify-center">
           <div className="flex justify-between ">
             <div className="flex justify-between relative ">
-              <h1 className="md:text-4xl md:p-5 px-4 md:text-start w-full text-center text-3xl text-darkBlue mb-2">
+              <h1 className="md:text-4xl md:p-5 px-4 md:text-start w-full text-center text-3xl font-bold text-darkBlue mb-2">
                 Your Recipes
               </h1>
             </div>

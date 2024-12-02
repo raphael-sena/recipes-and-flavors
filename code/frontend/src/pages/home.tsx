@@ -117,10 +117,10 @@ const MyRecipes = () => {
       <div className="">
         <MenuComponent/>
       </div>
-      <div className="md:ml-64 jsutify-center top-20 z-10">
+      <div className="md:ml-64 jsutify-center top-20">
 
         {/* Section All Recipes */}
-        <section className="relative z-10 justify-center">
+        <section className="relative justify-center">
           <div className="flex justify-between ">
             <div className="flex justify-between relative ">
               <h1 className="md:text-4xl md:p-5 px-4 md:text-start w-full text-center text-3xl text-darkBlue font-bold mb-2">
@@ -148,11 +148,13 @@ const MyRecipes = () => {
           </div>
           <hr className="h-px mb-2 bg-darkBlue border-0" />
 
-          <div className="">
-            <div className="flex flex-wrap gap-1 justify-center md:justify-start md:ml-8 lg:ml-16">
+          <div className="z-20">
+            <div className="flex flex-wrap gap-1 justify-center md:justify-start md:ml-8 lg:ml-16 ">
               {recipes.map((recipe) => (
                 <div key={recipe.id} onClick={() => handleOpenModal(recipe)}>
-                  <RecipeCard recipe={recipe} />
+                  <div className="z-20">
+                    <RecipeCard recipe={recipe} />
+                  </div>
                 </div>
               ))}
             </div>
