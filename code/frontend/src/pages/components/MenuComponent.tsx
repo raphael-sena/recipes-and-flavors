@@ -52,7 +52,7 @@ const Navbar = () => {
   return (
     <div>
       {/* Menu fixo à esquerda em telas grandes */}
-      <nav className="hidden md:flex md:flex-col bg-background text-white md:w-64 md:fixed md:top-0 md:left-0 md:max-h-full z-20">
+      <nav className="hidden md:flex md:flex-col bg-background min-h-screen text-white md:w-64 md:fixed md:top-0 md:left-0 md:max-h-full z-20">
         <div className="flex items-center justify-center h-16 mt-6 bg-background">
           <Link
             href={{
@@ -99,42 +99,6 @@ const Navbar = () => {
                 >
                   <MdAssignmentAdd />
                   <p className="px-2">New Recipe</p>
-                </a>
-              </li>
-            </ul>
-          </li>
-
-          <li className="relative group px-4 py-2 hover:bg-darkBlue hover:text-light">
-            <div className="flex items-center text-center">
-              <BiSolidCategoryAlt />
-              <p className="px-2">Category</p>
-            </div>
-            <ul className="absolute left-60 top-0 bg-darkBlue text-light shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 ease-in-out ml-1 w-full">
-              <li className="hover:bg-blue hover:text-darkBlue">
-                <a
-                  href="/recipes=?breakfast"
-                  className="px-4 py-2 flex items-center text-center"
-                >
-                  <FaCoffee />
-                  <p className="pl-2">Breakfast</p>
-                </a>
-              </li>
-              <li  className="hover:bg-blue hover:text-darkBlue">
-                <a
-                  href="/recipe"
-                  className="px-4 py-2 flex items-center text-center"
-                >
-                  <GiMeal />
-                  <p className="px-2">Lunch / Dinner</p>
-                </a>
-              </li>
-              <li  className="hover:bg-blue hover:text-darkBlue">
-                <a
-                  href="/recipe"
-                  className="px-4 py-2 flex items-center text-center"
-                >
-                  <GiStairsCake />
-                  <p className="px-2">Dessert</p>
                 </a>
               </li>
             </ul>

@@ -111,13 +111,6 @@ const RecipeModal: React.FC<RecipeModalProps> = ({
     }
   };
 
-  const handleLoadMore = () => {
-    if (hasMore && !isLoading) {
-      loadReviews(page + 1);
-      setPage((prevPage) => prevPage + 1);
-    }
-  };
-
   const handleAddReview = async () => {
     if (!newReview.trim() || rating < 1 || rating > 5) return;
 
@@ -297,22 +290,8 @@ const RecipeModal: React.FC<RecipeModalProps> = ({
         {/* Título */}
         <div>
           <div className="flex justify-between items-center">
-            <div className="flex items-center gap-2">
+            <div className="flex justify-between items-center">
               <h2 className="text-2xl font-bold">{recipe.name}</h2>
-              {!recipe.deleted && (
-                <Link
-                  href={{
-                    pathname: "/my-recipes/" + recipe.id + "/edit",
-                  }}
-                >
-                  <div className="relative group">
-                    <IoPencil />
-                    <span className="absolute left-1/2 transform -translate-x-1/2 bottom-full mb-1 text-sm text-gray-700 opacity-0 group-hover:opacity-100 transition-opacity">
-                      Edit
-                    </span>
-                  </div>
-                </Link>
-              )}
             </div>
             <button
               onClick={onClose}
@@ -461,24 +440,46 @@ const RecipeModal: React.FC<RecipeModalProps> = ({
               className="w-full p-2 border border-gray-300 rounded"
               placeholder="Add your review here..."
             ></textarea>
-            <div className="flex gap-2">
-              <div className="mt-2">
-                <label className="text-sm">Rating:</label>
-                <input
-                  type="number"
-                  value={rating}
-                  onChange={(e) => setRating(Number(e.target.value))}
-                  className="ml-2 p-1 border border-gray-300 rounded w-16"
-                  min="1"
-                  max="5"
-                />
-              </div>
+            <div className="flex w-full justify-between">
+              <div className="flex gap-2">
+                <div className="mt-2">
+                  <label className="text-sm">Rating:</label>
+                  <input
+                    type="number"
+                    value={rating}
+                    onChange={(e) => setRating(Number(e.target.value))}
+                    className="ml-2 p-1 border border-gray-300 rounded w-16"
+                    min="1"
+                    max="5"
+                  />
+                </div>
               <button
                 onClick={handleAddReview}
                 className="mt-2 px-4 py-2 bg-black text-white rounded hover:bg-blue-600"
               >
                 Submit Review
               </button>
+              </div>
+
+              <div className="items-center justify-center mt-4">
+                {!recipe.deleted && (
+                  <Link
+                    href={{
+                      pathname: "/my-recipes/" + recipe.id + "/edit",
+                    }}
+                  >
+                    <div className="flex">
+                      <div className="relative group items-center flex">
+                        <IoPencil />
+                        <span className="absolute left-1/2 transform -translate-x-1/2 bottom-full mb-1 text-sm text-gray-700 opacity-0 group-hover:opacity-100 transition-opacity">
+                          Edit
+                        </span>
+                      </div>
+                      <p>Edit Recipe</p>
+                    </div>
+                  </Link>
+                )}
+              </div>
             </div>
           </div>
         </div>
